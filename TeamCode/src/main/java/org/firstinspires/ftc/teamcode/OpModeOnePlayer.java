@@ -93,6 +93,10 @@ public class OpModeOnePlayer extends LinearOpMode {
             {
                 extensionMotor.setPower(-1);
             }
+            else
+            {
+                extensionMotor.setPower(0);
+            }
 
             if ((gamepad1.right_trigger + (-gamepad1.left_trigger)) == 0)
             {
