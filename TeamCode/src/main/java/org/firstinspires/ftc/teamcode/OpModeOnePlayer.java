@@ -18,12 +18,10 @@ public class OpModeOnePlayer extends LinearOpMode {
     public DcMotor  rightDrive     = null;
     public DcMotor  armMotor       = null;
     public DcMotor  extensionMotor = null;
-    public CRServo  claw           = null;
-    public Servo    wrist          = null;
+    public CRServo  wrist          = null;
+    public Servo    claw           = null;
 
     double targetPosition = 0;
-
-    final double ARM_TICKS_PER_DEGREE = 19.7924893140647; //exact fraction is (194481/9826)
 
     @Override
     public void runOpMode() {
@@ -32,12 +30,13 @@ public class OpModeOnePlayer extends LinearOpMode {
         double forward;
         double rotate;
         double max;
-        double absPower;
 
         leftDrive      = hardwareMap.get(DcMotor.class, "left_front_drive");
         rightDrive     = hardwareMap.get(DcMotor.class, "right_front_drive");
         armMotor       = hardwareMap.get(DcMotor.class, "left_arm");
         extensionMotor = hardwareMap.get(DcMotor.class, "extender");
+        wrist          = hardwareMap.get(CRServo.class, "wrist");
+        claw           = hardwareMap.get(Servo.class, "claw");
 
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -123,6 +122,28 @@ public class OpModeOnePlayer extends LinearOpMode {
             //////////////
             // --CLAW-- //
             //////////////
+
+            if (gamepad1.x)
+            {
+                wrist.setPower(1);
+            }
+            else if (gamepad1.y)
+            {
+                wrist.setPower(-1);
+            }
+            else
+            {
+                wrist.setPower(0);
+            }
+
+            if (gamepad1.a)
+            {
+                claw.setPosition(1);
+            }
+            else if (gamepad1.b)
+            {
+                claw.setPosition(0);
+            }
         }
     }
 }
