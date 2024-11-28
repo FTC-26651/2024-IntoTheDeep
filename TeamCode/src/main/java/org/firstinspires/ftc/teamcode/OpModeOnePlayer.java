@@ -115,7 +115,7 @@ public class OpModeOnePlayer extends LinearOpMode {
                 targetPosition = 10;
             } else if (gamepad1.right_trigger > 0  && armMotor.getCurrentPosition() >= 5000) {
                 telemetry.addLine("ARM TRYING TO GO BEYOND CURRENT LIMIT");
-                targetPosition = 4090;
+                targetPosition = 4990;
             } else {
                 if (gamepad1.right_trigger - gamepad1.left_trigger == 0) {
                     if (armMotor.getCurrentPosition() != targetPosition) {
