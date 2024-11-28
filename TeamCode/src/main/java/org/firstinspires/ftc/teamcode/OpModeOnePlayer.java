@@ -24,7 +24,7 @@ public class OpModeOnePlayer extends LinearOpMode {
 
     int targetPosition = 0;
 
-    double Kp = 0.01;
+    double Kp = 0.008;
     double Ki = 0.0015;
     double Kd = 0.00015;
 
