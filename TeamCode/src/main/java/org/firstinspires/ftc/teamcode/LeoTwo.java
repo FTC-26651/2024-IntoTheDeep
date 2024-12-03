@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -17,13 +18,13 @@ public class LeoTwo extends Robot {
 
     double targetPosition;
 
-    public DcMotorEx armMotor       = null;
-    LionsDcMotorEx   armMotorEx     = null;
-    public DcMotor   extensionMotor = null;
-    public DcMotor   leftDrive      = null;
-    public DcMotor   rightDrive     = null;
-    public CRServo   wrist          = null;
-    public Servo     claw           = null;
+    DcMotorEx armMotor          = null;
+    LionsDcMotorEx armMotorEx   = null;
+    DcMotor   extensionMotor    = null;
+    DcMotor   leftDrive         = null;
+    DcMotor   rightDrive        = null;
+    CRServo   wrist             = null;
+    Servo     claw              = null;
 
     public LeoTwo(HardwareMap hm, Telemetry tm) {
         super(hm, tm);
@@ -49,11 +50,13 @@ public class LeoTwo extends Robot {
 
         armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        wrist.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void move(double x_axis, double y_axis, double tilt) {
-        left  = -y_axis + tilt;
-        right = -y_axis - tilt;
+        left  = y_axis + tilt;
+        right = y_axis - tilt;
 
         /* Normalize the values so neither exceed +/- 1.0 */
         max = Math.max(Math.abs(left), Math.abs(right));
@@ -67,22 +70,25 @@ public class LeoTwo extends Robot {
     }
 
     public void extendArm(int inOrOut) {
-        extensionMotor.setPower(inOrOut);
+        if (armMotorEx.getCurrentPosition() < 3000) {
+            extensionMotor.setPower(inOrOut);
+        }
     }
 
     public void moveArm(double direction) {
         if (armMotorEx.isOverCurrent()){
-            setErrors("MOTOR EXCEEDED CURRENT LIMIT!");
-            armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            this.telemetry.addLine("MOTOR EXCEEDED CURRENT LIMIT!");
+//            armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorEx.setPower(0);
+            direction = 0;
         } else if (direction < 0  && armMotorEx.getCurrentPosition() < 0) {
-            setErrors("ARM TRYING TO GO BEYOND DOCK");
+            this.telemetry.addLine("ARM TRYING TO GO BEYOND DOCK");
             targetPosition = 10;
-        } else if (direction > 0  && armMotorEx.getCurrentPosition() >= 5000) {
-            setErrors("ARM TRYING TO GO BEYOND CURRENT LIMIT");
-            targetPosition = 4990;
-        } else {
-            setErrors("");
+            direction = 0;
+        } else if (direction > 0  && armMotorEx.getCurrentPosition() >= 5500) {
+            this.telemetry.addLine("ARM TRYING TO GO BEYOND CURRENT LIMIT");
+            targetPosition = 5490;
+            direction = 0;
         }
 
         if (direction != 0) {
@@ -94,10 +100,18 @@ public class LeoTwo extends Robot {
         this.telemetry.addData("Arm motor turning to: ", targetPosition);
         this.telemetry.addData("Arm motor is currently: ", armMotorEx.getCurrentPosition());
     }
+
     public void moveClaw(int direction) {
-            claw.setPosition(direction);
+        claw.setPosition(direction);
     }
-    public void moveWrist(int direction) {}
+
+    public void moveWrist(int direction) {
+        wrist.setPower(direction);
+    }
+
+    public int getArmPosition() {
+        return armMotorEx.getCurrentPosition();
+    }
 }
 
 //public class OpModeOnePlayer extends LinearOpMode {

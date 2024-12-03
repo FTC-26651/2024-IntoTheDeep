@@ -6,8 +6,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.LeoTwo;
 
-@TeleOp(name = "Leo 2 - 1P", group = "Robot")
-public class OpModeOnePlayer extends LinearOpMode {
+@TeleOp(name = "Leo 2 - 2P", group = "Robot")
+
+public class OpModeTwoPlayer extends LinearOpMode {
 
     /* Declare OpMode member. */
     public CRServo wrist = null;
@@ -32,7 +33,7 @@ public class OpModeOnePlayer extends LinearOpMode {
             // --DRIVE-- //
             ///////////////
 
-            robot.move(0.0, -1 * gamepad1.left_stick_y, gamepad1.right_stick_x);
+            robot.move(0.0, -1 * gamepad2.left_stick_y, gamepad2.right_stick_x);
 
             /////////////
             // --ARM-- //

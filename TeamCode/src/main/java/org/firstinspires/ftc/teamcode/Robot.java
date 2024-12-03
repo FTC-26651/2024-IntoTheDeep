@@ -18,11 +18,14 @@ public abstract class Robot {
     }
 
     public abstract void initRobot();
+
     public abstract void move(double x_axis, double y_axis, double tilt);
     public abstract void extendArm(int inOrOut);
     public abstract void moveArm(double direction);
     public abstract void moveClaw(int direction);
     public abstract void moveWrist(int direction);
+
+    public abstract int getArmPosition();
 
     public void setTeam(char color) {
         if (color == 'b') {
