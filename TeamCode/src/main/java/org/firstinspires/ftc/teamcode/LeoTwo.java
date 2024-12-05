@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class LeoTwo extends Robot {
@@ -17,6 +19,8 @@ public class LeoTwo extends Robot {
     double max;
 
     double targetPosition;
+
+    private final ElapsedTime armTime = new ElapsedTime();
 
     DcMotorEx armMotor          = null;
     LionsDcMotorEx armMotorEx   = null;
@@ -40,6 +44,8 @@ public class LeoTwo extends Robot {
 
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        extensionMotor.setDirection(DcMotor.Direction.REVERSE);
 
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -72,22 +78,19 @@ public class LeoTwo extends Robot {
     public void extendArm(int inOrOut) {
         if (armMotorEx.getCurrentPosition() < 3000) {
             extensionMotor.setPower(inOrOut);
+            armTime.reset();
+        } else if (armTime.seconds() < 1.5) {
+            // Retract the arm to stay legal
+            extensionMotor.setPower(-1);
+        } else {
+            extensionMotor.setPower(0);
         }
     }
 
     public void moveArm(double direction) {
         if (armMotorEx.isOverCurrent()){
             this.telemetry.addLine("MOTOR EXCEEDED CURRENT LIMIT!");
-//            armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorEx.setPower(0);
-            direction = 0;
-        } else if (direction < 0  && armMotorEx.getCurrentPosition() < 0) {
-            this.telemetry.addLine("ARM TRYING TO GO BEYOND DOCK");
-            targetPosition = 10;
-            direction = 0;
-        } else if (direction > 0  && armMotorEx.getCurrentPosition() >= 5500) {
-            this.telemetry.addLine("ARM TRYING TO GO BEYOND CURRENT LIMIT");
-            targetPosition = 5490;
             direction = 0;
         }
 
@@ -95,7 +98,7 @@ public class LeoTwo extends Robot {
             armMotorEx.setVelocity(1000 * (direction));
             targetPosition = armMotorEx.getCurrentPosition();
         } else {
-            armMotorEx.PID(targetPosition, 0.008, 0.0015, 0.00015);
+            armMotorEx.PID(targetPosition, 0.0065, 0.001, 0.00015);
         }
         this.telemetry.addData("Arm motor turning to: ", targetPosition);
         this.telemetry.addData("Arm motor is currently: ", armMotorEx.getCurrentPosition());
