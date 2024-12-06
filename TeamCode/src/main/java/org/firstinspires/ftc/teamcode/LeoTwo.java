@@ -45,8 +45,6 @@ public class LeoTwo extends Robot {
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        extensionMotor.setDirection(DcMotor.Direction.REVERSE);
-
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorEx.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -76,7 +74,7 @@ public class LeoTwo extends Robot {
     }
 
     public void extendArm(int inOrOut) {
-        if (armMotorEx.getCurrentPosition() < 3000) {
+        if (armMotorEx.getCurrentPosition() < 100) {
             extensionMotor.setPower(inOrOut);
             armTime.reset();
         } else if (armTime.seconds() < 1.5) {

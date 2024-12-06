@@ -20,6 +20,8 @@ public class TimeBasedSampleFar extends LinearOpMode {
         robot.setName("Leo Two");
         robot.initRobot();
 
+        robot.moveClaw(1);
+
         telemetry.addData("Status", "Ready to run");
         telemetry.update();
 
@@ -77,7 +79,7 @@ public class TimeBasedSampleFar extends LinearOpMode {
         robot.move(0.0, speed, 0.0);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg : %4.1f S Elapsed", runtime.seconds());
+            telemetry.addData("Path", "Leg 7: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
@@ -91,6 +93,7 @@ public class TimeBasedSampleFar extends LinearOpMode {
         while (opModeIsActive() && robot.getArmPosition() < 2900) {
             robot.moveArm(0.7);
             telemetry.addData("Arm motor is currently at: ", robot.getArmPosition());
+            telemetry.update();
         }
 
         telemetry.addData("Path", "Complete");

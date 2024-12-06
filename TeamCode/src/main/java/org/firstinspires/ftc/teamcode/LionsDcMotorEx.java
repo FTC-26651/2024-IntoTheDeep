@@ -44,8 +44,6 @@ public class LionsDcMotorEx implements DcMotorEx {
         }
     }
 
-    ;
-
     // Implement ALL of the necessary methods...wugh //
     public MotorConfigurationType getMotorType() {
         return theMotor.getMotorType();
