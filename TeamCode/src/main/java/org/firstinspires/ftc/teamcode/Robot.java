@@ -58,4 +58,6 @@ public abstract class Robot {
     public String getErrors() {
         return errors;
     }
+
+    public abstract void setArmPositionZero();
 }

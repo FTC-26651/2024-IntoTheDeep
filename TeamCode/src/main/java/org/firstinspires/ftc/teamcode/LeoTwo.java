@@ -74,7 +74,7 @@ public class LeoTwo extends Robot {
     }
 
     public void extendArm(int inOrOut) {
-        if (armMotorEx.getCurrentPosition() < 100) {
+        if (armMotorEx.getCurrentPosition() < 300 && armMotorEx.getCurrentPosition() > -600) {
             extensionMotor.setPower(inOrOut);
             armTime.reset();
         } else if (armTime.seconds() < 1.5) {
@@ -91,6 +91,11 @@ public class LeoTwo extends Robot {
             armMotorEx.setPower(0);
             direction = 0;
         }
+//        if (armMotorEx.getCurrentPosition() < -600){
+//            this.telemetry.addLine("ARM TRYING TO BE ILLEGAL");
+//            targetPosition = -590;
+//            direction = 0;
+//        }
 
         if (direction != 0) {
             armMotorEx.setVelocity(1000 * (direction));
@@ -113,4 +118,10 @@ public class LeoTwo extends Robot {
     public int getArmPosition() {
         return armMotorEx.getCurrentPosition();
     }
+
+    public void setArmPositionZero() {
+        armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        targetPosition = 0;
+    }
+
 }

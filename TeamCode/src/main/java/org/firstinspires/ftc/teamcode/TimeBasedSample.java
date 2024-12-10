@@ -11,7 +11,7 @@ public class TimeBasedSample extends LinearOpMode {
     double speed = 0.5;
     double short_turn = 0.2;
     double long_turn = 1.0;
-    double path_to_submersible = 0.7;
+    double path_to_submersible = 0.65;
     Robot robot;
 
     @Override

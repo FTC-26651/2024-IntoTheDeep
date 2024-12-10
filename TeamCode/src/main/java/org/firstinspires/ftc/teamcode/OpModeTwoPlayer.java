@@ -61,6 +61,10 @@ public class OpModeTwoPlayer extends LinearOpMode {
                 robot.moveClaw(0);
             }
 
+            if (gamepad1.start) {
+                robot.setArmPositionZero();
+            }
+
             /////////////////
             // --DISPLAY-- //
             /////////////////
