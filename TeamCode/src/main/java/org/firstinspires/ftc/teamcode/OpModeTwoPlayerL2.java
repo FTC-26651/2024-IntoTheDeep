@@ -4,10 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
-import org.firstinspires.ftc.teamcode.LeoTwo;
+@TeleOp(name = "Leo 2 - 2P", group = "Robot")
 
-@TeleOp(name = "Leo 2 - 1P", group = "Robot")
-public class OpModeOnePlayer extends LinearOpMode {
+public class OpModeTwoPlayerL2 extends LinearOpMode {
 
     /* Declare OpMode member. */
     public CRServo wrist = null;
@@ -28,11 +27,13 @@ public class OpModeOnePlayer extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            robot.runEveryLoop();
+
             ///////////////
             // --DRIVE-- //
             ///////////////
 
-            robot.move(0.0, -1 * gamepad1.left_stick_y, gamepad1.right_stick_x);
+            robot.move(0.0, -1 * gamepad2.left_stick_y, gamepad2.right_stick_x);
 
             /////////////
             // --ARM-- //
@@ -58,6 +59,10 @@ public class OpModeOnePlayer extends LinearOpMode {
                 robot.moveClaw(1);
             } else if (gamepad1.b) {
                 robot.moveClaw(0);
+            }
+
+            if (gamepad1.start) {
+                robot.setArmPositionZero();
             }
 
             /////////////////

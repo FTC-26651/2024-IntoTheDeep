@@ -27,6 +27,11 @@ public abstract class Robot {
 
     public abstract int getArmPosition();
 
+    public abstract void setArmPositionZero();
+
+    // Define a function that is called every time through the main loop
+    public void runEveryLoop() {};
+
     public void setTeam(char color) {
         if (color == 'b') {
             team = 'b';
@@ -58,6 +63,4 @@ public abstract class Robot {
     public String getErrors() {
         return errors;
     }
-
-    public abstract void setArmPositionZero();
 }

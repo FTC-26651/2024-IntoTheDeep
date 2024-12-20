@@ -10,12 +10,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-public class LeoTwo extends Robot {
-    double left;
-    double right;
+import java.util.Arrays;
+import java.util.Collections;
+
+public class LeoOne extends Robot {
     double max;
 
     double targetPosition;
@@ -23,34 +25,42 @@ public class LeoTwo extends Robot {
     double lastPos;
     boolean isArmZeroing = false;
 
-    private final ElapsedTime armTime = new ElapsedTime();
     private final ElapsedTime extendTime = new ElapsedTime();
+    private final ElapsedTime armTime = new ElapsedTime();
 
     DcMotorEx armMotor          = null;
     LionsDcMotorEx armMotorEx   = null;
     DcMotor   extensionMotor    = null;
-    DcMotor   leftDrive         = null;
-    DcMotor   rightDrive        = null;
+    DcMotor   frontLeftDrive    = null;
+    DcMotor   frontRightDrive   = null;
+    DcMotor   backLeftDrive     = null;
+    DcMotor   backRightDrive    = null;
     CRServo   wrist             = null;
     Servo     claw              = null;
 
-    public LeoTwo(HardwareMap hm, Telemetry tm) {
+    public LeoOne(HardwareMap hm, Telemetry tm) {
         super(hm, tm);
     }
     public void initRobot() {
         armMotor = this.hardwareMap.get(DcMotorEx.class, "left_arm");
         armMotorEx = new LionsDcMotorEx(armMotor);
         extensionMotor = this.hardwareMap.get(DcMotor.class, "extender");
-        leftDrive = this.hardwareMap.get(DcMotor.class, "left_front_drive");
-        rightDrive = this.hardwareMap.get(DcMotor.class, "right_front_drive");
+        frontLeftDrive = this.hardwareMap.get(DcMotor.class, "left_front_drive");
+        frontRightDrive = this.hardwareMap.get(DcMotor.class, "right_front_drive");
+        backLeftDrive = this.hardwareMap.get(DcMotor.class, "left_back_drive");
+        backRightDrive = this.hardwareMap.get(DcMotor.class, "right_back_drive");
         wrist = this.hardwareMap.get(CRServo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
 
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorEx.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -63,18 +73,15 @@ public class LeoTwo extends Robot {
     }
 
     public void move(double x_axis, double y_axis, double tilt) {
-        left  = y_axis + tilt;
-        right = y_axis - tilt;
+        double leftFrontPower = Range.clip(y_axis + x_axis + tilt, -1.0, 1.0);
+        double rightFrontPower = Range.clip(y_axis - x_axis - tilt, -1.0, 1.0);
+        double leftBackPower = Range.clip(y_axis - x_axis + tilt, -1.0, 1.0);
+        double rightBackPower = Range.clip(y_axis + x_axis - tilt, -1.0, 1.0);
 
-        /* Normalize the values so neither exceed +/- 1.0 */
-        max = Math.max(Math.abs(left), Math.abs(right));
-        if (max > 1.0) {
-            left /= max;
-            right /= max;
-        }
-
-        leftDrive.setPower(left);
-        rightDrive.setPower(right);
+        frontLeftDrive.setPower(leftFrontPower);
+        frontRightDrive.setPower(rightFrontPower);
+        backLeftDrive.setPower(leftBackPower);
+        backRightDrive.setPower(rightBackPower);
     }
 
     public void extendArm(int inOrOut) {
@@ -122,7 +129,7 @@ public class LeoTwo extends Robot {
     public void setArmPositionZero() {
         isArmZeroing = true;
         lastPos = armMotorEx.getCurrentPosition();
-        armMotorEx.setVelocity(10000);
+        armMotorEx.setVelocity(1000 * (-0.8));
     }
 
     public void runEveryLoop() {
@@ -133,7 +140,6 @@ public class LeoTwo extends Robot {
                 armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 targetPosition = 0;
                 armMotorEx.setVelocity(0);
-
                 isArmZeroing = false;
             }
             lastPos = pos;

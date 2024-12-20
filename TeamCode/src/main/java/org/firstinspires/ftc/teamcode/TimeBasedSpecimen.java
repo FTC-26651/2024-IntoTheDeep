@@ -35,67 +35,6 @@ public class TimeBasedSpecimen extends LinearOpMode {
             telemetry.update();
         }
 
-        // Step 2  - Turn Left //
-        robot.move(0.0, 0.0, 1 * speed);
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < short_turn) {
-            telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 3 - Drive Forward //
-        robot.move(0.0, speed, 0.0);
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 0.55) {
-            telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 4  - Turn Right //
-        robot.move(0.0, 0.0, -1 * speed);
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < short_turn) {
-            telemetry.addData("Path", "Leg 4: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 5 - Drive Forward //
-        robot.move(0.0, speed, 0.0);
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < path_to_submersible) {
-            telemetry.addData("Path", "Leg 5: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 6  - Turn to submersible //
-        robot.move(0.0, 0.0, -1 * speed);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < long_turn)) {
-            telemetry.addData("Path", "Leg 6: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 7 - Drive to Submersible //
-        robot.move(0.0, speed, 0.0);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 7: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 8 - Stop //
-        robot.move(0.0, 0.0, 0.0);
-
-        // Step 9 - Lift the wrist out of the way //
-        robot.moveWrist(-1);
-
-        // Step 10 - Touch the Submersible //
-        while (opModeIsActive() && robot.getArmPosition() < 2900) {
-            robot.moveArm(0.7);
-            telemetry.addData("Arm motor is currently at: ", robot.getArmPosition());
-            telemetry.update();
-        }
-
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
