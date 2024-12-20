@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp(name = "Leo 2 - 2P", group = "Robot")
-
 public class OpModeTwoPlayerL2 extends LinearOpMode {
 
     /* Declare OpMode member. */

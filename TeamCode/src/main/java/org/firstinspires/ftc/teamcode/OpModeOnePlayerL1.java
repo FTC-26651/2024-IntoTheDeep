@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
-import org.firstinspires.ftc.teamcode.LeoTwo;
-
 @TeleOp(name = "Leo 1 - 1P", group = "Robot")
 public class OpModeOnePlayerL1 extends LinearOpMode {
 
