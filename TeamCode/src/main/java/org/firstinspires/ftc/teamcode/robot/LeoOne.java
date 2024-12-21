@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.robot.extensions.LionsDcMotorEx;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -68,15 +69,15 @@ public class LeoOne extends Robot {
     }
 
     public void move(double x_axis, double y_axis, double tilt) {
-        double leftFrontPower = Range.clip(y_axis + x_axis + tilt, -1.0, 1.0);
-        double rightFrontPower = Range.clip(y_axis - x_axis - tilt, -1.0, 1.0);
-        double leftBackPower = Range.clip(y_axis - x_axis + tilt, -1.0, 1.0);
-        double rightBackPower = Range.clip(y_axis + x_axis - tilt, -1.0, 1.0);
+        double leftBackPower = Range.clip(y_axis + x_axis + tilt, -1.0, 1.0);
+        double rightBackPower = Range.clip(y_axis - x_axis - tilt, -1.0, 1.0);
+        double leftFrontPower = Range.clip(y_axis - x_axis + tilt, -1.0, 1.0);
+        double rightFrontPower = Range.clip(y_axis + x_axis - tilt, -1.0, 1.0);
 
-        frontLeftDrive.setPower(leftFrontPower);
-        frontRightDrive.setPower(rightFrontPower);
         backLeftDrive.setPower(leftBackPower);
         backRightDrive.setPower(rightBackPower);
+        frontLeftDrive.setPower(leftFrontPower);
+        frontRightDrive.setPower(rightFrontPower);
     }
 
     public void extendArm(int inOrOut) {
