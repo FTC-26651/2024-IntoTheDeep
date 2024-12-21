@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,7 +11,7 @@ public abstract class Robot {
     protected HardwareMap hardwareMap;
     protected Telemetry telemetry;
 
-    // Conostructor
+    // Constructor
     public Robot(HardwareMap hm, Telemetry tm) {
         hardwareMap = hm;
         telemetry = tm;
