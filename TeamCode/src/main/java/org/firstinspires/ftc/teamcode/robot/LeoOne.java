@@ -24,29 +24,39 @@ public class LeoOne extends Robot {
     private final ElapsedTime extendTime = new ElapsedTime();
     private final ElapsedTime armTime = new ElapsedTime();
 
-    DcMotorEx armMotor          = null;
+    DcMotorEx armMotor       = null;
+    DcMotorEx extensionMotor = null;
+    DcMotorEx FLD            = null;
+    DcMotorEx FRD            = null;
+    DcMotorEx BLD            = null;
+    DcMotorEx BRD            = null;
+    CRServo   wrist          = null;
+    Servo     claw           = null;
+
     LionsDcMotorEx armMotorEx   = null;
-    DcMotor   extensionMotor    = null;
-    DcMotor   frontLeftDrive    = null;
-    DcMotor   frontRightDrive   = null;
-    DcMotor   backLeftDrive     = null;
-    DcMotor   backRightDrive    = null;
-    CRServo   wrist             = null;
-    Servo     claw              = null;
+    LionsDcMotorEx frontLeftDrive   = null;
+    LionsDcMotorEx frontRightDrive   = null;
+    LionsDcMotorEx backLeftDrive   = null;
+    LionsDcMotorEx backRightDrive   = null;
 
     public LeoOne(HardwareMap hm, Telemetry tm) {
         super(hm, tm);
     }
     public void initRobot() {
         armMotor = this.hardwareMap.get(DcMotorEx.class, "left_arm");
-        armMotorEx = new LionsDcMotorEx(armMotor);
-        extensionMotor = this.hardwareMap.get(DcMotor.class, "extender");
-        frontLeftDrive = this.hardwareMap.get(DcMotor.class, "left_front_drive");
-        frontRightDrive = this.hardwareMap.get(DcMotor.class, "right_front_drive");
-        backLeftDrive = this.hardwareMap.get(DcMotor.class, "left_back_drive");
-        backRightDrive = this.hardwareMap.get(DcMotor.class, "right_back_drive");
+        extensionMotor = this.hardwareMap.get(DcMotorEx.class, "extender");
+        FLD = this.hardwareMap.get(DcMotorEx.class, "left_front_drive");
+        FRD = this.hardwareMap.get(DcMotorEx.class, "right_front_drive");
+        BLD = this.hardwareMap.get(DcMotorEx.class, "left_back_drive");
+        BRD = this.hardwareMap.get(DcMotorEx.class, "right_back_drive");
         wrist = this.hardwareMap.get(CRServo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
+
+        armMotorEx = new LionsDcMotorEx(armMotor);
+        frontLeftDrive = new LionsDcMotorEx(FLD);
+        frontRightDrive = new LionsDcMotorEx(FRD);
+        backLeftDrive = new LionsDcMotorEx(BLD);
+        backRightDrive = new LionsDcMotorEx(BRD);
 
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -64,6 +74,14 @@ public class LeoOne extends Robot {
 
         armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wrist.setDirection(DcMotorSimple.Direction.FORWARD);
     }
@@ -78,6 +96,47 @@ public class LeoOne extends Robot {
         backRightDrive.setPower(rightBackPower);
         frontLeftDrive.setPower(leftFrontPower);
         frontRightDrive.setPower(rightFrontPower);
+    }
+
+    public void moveWithEncoder(double backLeft, double backRight, double frontLeft, double frontRight) {
+        backLeftDrive.PID(backLeft, 0.05, 0.001, 0.0005);
+        backRightDrive.PID(backRight, 0.05, 0.001, 0.0005);
+        frontLeftDrive.PID(frontLeft, 0.05, 0.001, 0.0005);
+        frontRightDrive.PID(frontRight, 0.05, 0.001, 0.0005);
+
+        this.telemetry.addData("FRP Power: ", frontRightDrive.getPower());
+        this.telemetry.addData("FRP Delta: ", frontRightDrive.getCurrentPosition() - frontRight);
+        this.telemetry.addData("FRP Pos: ", frontRightDrive.getCurrentPosition());
+        this.telemetry.update();
+
+    }
+
+    public int getTicksInInch() {
+        return 58;
+    }
+
+    public int getBackLeftPos() {
+        return backLeftDrive.getCurrentPosition();
+    }
+    public int getBackRightPos() {
+        return backRightDrive.getCurrentPosition();
+    }
+    public int getFrontLeftPos() {
+        return frontLeftDrive.getCurrentPosition();
+    }
+    public int getFrontRightPos() {
+        return frontRightDrive.getCurrentPosition();
+    }
+
+    public void resetDriveEncoders() {
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void extendArm(int inOrOut) {

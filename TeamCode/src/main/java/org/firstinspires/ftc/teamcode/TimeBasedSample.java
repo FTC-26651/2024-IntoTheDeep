@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto by Time - Sample Start, near post", group = "Robot")
+@Autonomous(name = "Auto by Time - Sample Start", group = "Robot")
 public class TimeBasedSample extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
