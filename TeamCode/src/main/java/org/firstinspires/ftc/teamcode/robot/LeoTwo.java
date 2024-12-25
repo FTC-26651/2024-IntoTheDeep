@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.robot.extensions.LionsDcMotorEx;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +22,8 @@ public class LeoTwo extends Robot {
     double left;
     double right;
     double max;
+
+    double driveSpeed = 1;
 
     double targetPosition;
 
@@ -34,6 +40,10 @@ public class LeoTwo extends Robot {
     DcMotor   rightDrive        = null;
     CRServo   wrist             = null;
     Servo     claw              = null;
+
+    IMU imu;
+
+    YawPitchRollAngles orientation;
 
     public LeoTwo(HardwareMap hm, Telemetry tm) {
         super(hm, tm);
@@ -59,8 +69,19 @@ public class LeoTwo extends Robot {
 
         armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wrist.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        orientation = imu.getRobotYawPitchRollAngles();
     }
 
     public void move(double x_axis, double y_axis, double tilt) {
@@ -74,8 +95,30 @@ public class LeoTwo extends Robot {
             right /= max;
         }
 
-        leftDrive.setPower(left);
-        rightDrive.setPower(right);
+        leftDrive.setPower(left * driveSpeed);
+        rightDrive.setPower(right * driveSpeed);
+    }
+
+    public int getTicksInInch() {
+        return 58;
+    }
+
+    public void resetDriveEncoders() {
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void increaseMoveSpeed() {
+        if (driveSpeed < 0.91) {
+            driveSpeed = driveSpeed + 0.1;
+        }
+    }
+    public void decreaseMoveSpeed() {
+        if (driveSpeed > 0.11) {
+            driveSpeed = driveSpeed - 0.1;
+        }
     }
 
     public void extendArm(int inOrOut) {
@@ -126,7 +169,26 @@ public class LeoTwo extends Robot {
         armMotorEx.setVelocity(10000);
     }
 
+    public double getYaw() {
+        orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
+    }
+    public double getPitch() {
+        orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getPitch(AngleUnit.DEGREES);
+    }
+    public double getRoll() {
+        orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getRoll(AngleUnit.DEGREES);
+    }
+
+    public void resetYaw() {
+        imu.resetYaw();
+    }
+
     public void runEveryLoop() {
+        this.telemetry.addData("Robot speed: ", driveSpeed);
+
         if (isArmZeroing && (armTime.seconds() > 0.2)) {
             double pos = armMotorEx.getCurrentPosition();
             if ((Math.abs(pos - lastPos)) < 2) {

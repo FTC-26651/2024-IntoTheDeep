@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.robot.extensions.LionsDcMotorEx;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,8 +21,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class LeoOne extends Robot {
     double targetPosition;
-
     double lastPos;
+
+    double driveSpeed = 1;
+
     boolean isArmZeroing = false;
 
     private final ElapsedTime extendTime = new ElapsedTime();
@@ -39,6 +45,10 @@ public class LeoOne extends Robot {
     LionsDcMotorEx backLeftDrive   = null;
     LionsDcMotorEx backRightDrive   = null;
 
+    IMU imu;
+
+    YawPitchRollAngles orientation;
+
     public LeoOne(HardwareMap hm, Telemetry tm) {
         super(hm, tm);
     }
@@ -51,6 +61,8 @@ public class LeoOne extends Robot {
         BRD = this.hardwareMap.get(DcMotorEx.class, "right_back_drive");
         wrist = this.hardwareMap.get(CRServo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
+
+        imu = this.hardwareMap.get(IMU.class, "imu");
 
         armMotorEx = new LionsDcMotorEx(armMotor);
         frontLeftDrive = new LionsDcMotorEx(FLD);
@@ -84,6 +96,13 @@ public class LeoOne extends Robot {
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wrist.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        orientation = imu.getRobotYawPitchRollAngles();
     }
 
     public void move(double x_axis, double y_axis, double tilt) {
@@ -92,23 +111,29 @@ public class LeoOne extends Robot {
         double leftFrontPower = Range.clip(y_axis - x_axis + tilt, -1.0, 1.0);
         double rightFrontPower = Range.clip(y_axis + x_axis - tilt, -1.0, 1.0);
 
-        backLeftDrive.setPower(leftBackPower);
-        backRightDrive.setPower(rightBackPower);
-        frontLeftDrive.setPower(leftFrontPower);
-        frontRightDrive.setPower(rightFrontPower);
+        backLeftDrive.setPower(leftBackPower * driveSpeed);
+        backRightDrive.setPower(rightBackPower * driveSpeed);
+        frontLeftDrive.setPower(leftFrontPower * driveSpeed);
+        frontRightDrive.setPower(rightFrontPower * driveSpeed);
+    }
+
+    public void move(double leftBackPower, double rightBackPower, double leftFrontPower, double rightFrontPower) {
+        leftBackPower = Range.clip(leftBackPower, -1.0, 1.0);
+        rightBackPower = Range.clip(rightBackPower, -1.0, 1.0);
+        leftFrontPower = Range.clip(leftFrontPower, -1.0, 1.0);
+        rightFrontPower = Range.clip(rightFrontPower, -1.0, 1.0);
+
+        backLeftDrive.setPower(leftBackPower * driveSpeed);
+        backRightDrive.setPower(rightBackPower * driveSpeed);
+        frontLeftDrive.setPower(leftFrontPower * driveSpeed);
+        frontRightDrive.setPower(rightFrontPower * driveSpeed);
     }
 
     public void moveWithEncoder(double backLeft, double backRight, double frontLeft, double frontRight) {
-        backLeftDrive.PID(backLeft, 0.05, 0.001, 0.0005);
-        backRightDrive.PID(backRight, 0.05, 0.001, 0.0005);
-        frontLeftDrive.PID(frontLeft, 0.05, 0.001, 0.0005);
-        frontRightDrive.PID(frontRight, 0.05, 0.001, 0.0005);
-
-        this.telemetry.addData("FRP Power: ", frontRightDrive.getPower());
-        this.telemetry.addData("FRP Delta: ", frontRightDrive.getCurrentPosition() - frontRight);
-        this.telemetry.addData("FRP Pos: ", frontRightDrive.getCurrentPosition());
-        this.telemetry.update();
-
+        backLeftDrive.PID(backLeft, 0.2, 0.001, 0.0005);
+        backRightDrive.PID(backRight, 0.2, 0.001, 0.0005);
+        frontLeftDrive.PID(frontLeft, 0.2, 0.001, 0.0005);
+        frontRightDrive.PID(frontRight, 0.2, 0.001, 0.0005);
     }
 
     public int getTicksInInch() {
@@ -137,6 +162,17 @@ public class LeoOne extends Robot {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void increaseMoveSpeed() {
+        if (driveSpeed < 0.91) {
+            driveSpeed = driveSpeed + 0.1;
+        }
+    }
+    public void decreaseMoveSpeed() {
+        if (driveSpeed > 0.11) {
+            driveSpeed = driveSpeed - 0.1;
+        }
     }
 
     public void extendArm(int inOrOut) {
@@ -187,7 +223,26 @@ public class LeoOne extends Robot {
         armMotorEx.setVelocity(1000 * (-0.8));
     }
 
+    public double getYaw() {
+        orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
+    }
+    public double getPitch() {
+        orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getPitch(AngleUnit.DEGREES);
+    }
+    public double getRoll() {
+        orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getRoll(AngleUnit.DEGREES);
+    }
+
+    public void resetYaw() {
+        imu.resetYaw();
+    }
+
     public void runEveryLoop() {
+        this.telemetry.addData("Robot speed: ", driveSpeed);
+
         if (isArmZeroing && (armTime.seconds() > 0.2)) {
             double pos = armMotorEx.getCurrentPosition();
             if ((Math.abs(pos - lastPos)) < 2) {

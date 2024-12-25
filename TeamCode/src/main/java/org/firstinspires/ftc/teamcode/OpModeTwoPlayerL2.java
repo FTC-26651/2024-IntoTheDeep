@@ -14,6 +14,9 @@ public class OpModeTwoPlayerL2 extends LinearOpMode {
     public CRServo wrist = null;
     Robot robot;
 
+    boolean dUpIsPressed = false;
+    boolean dDownIsPressed = false;
+
     @Override
     public void runOpMode() {
         robot = new LeoTwo(this.hardwareMap, this.telemetry);
@@ -36,6 +39,24 @@ public class OpModeTwoPlayerL2 extends LinearOpMode {
             ///////////////
 
             robot.move(0.0, -1 * gamepad2.left_stick_y, gamepad2.right_stick_x);
+
+            if (gamepad2.dpad_up) {
+                if (!dUpIsPressed) {
+                    robot.increaseMoveSpeed();
+                }
+                dUpIsPressed = true;
+            } else {
+                dUpIsPressed = false;
+            }
+
+            if (gamepad2.dpad_down) {
+                if (!dDownIsPressed) {
+                    robot.decreaseMoveSpeed();
+                }
+                dDownIsPressed = true;
+            } else {
+                dDownIsPressed = false;
+            }
 
             /////////////
             // --ARM-- //
