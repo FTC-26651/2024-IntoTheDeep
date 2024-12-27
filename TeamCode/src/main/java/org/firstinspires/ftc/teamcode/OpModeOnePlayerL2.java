@@ -34,7 +34,7 @@ public class OpModeOnePlayerL2 extends LinearOpMode {
             // --DRIVE-- //
             ///////////////
 
-            robot.move(0.0, -1 * gamepad1.left_stick_y, gamepad1.left_stick_x);
+            robot.move(0.0, -1 * gamepad1.left_stick_y, gamepad1.right_stick_x);
 
             /////////////
             // --ARM-- //

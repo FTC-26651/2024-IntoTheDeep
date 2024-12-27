@@ -34,7 +34,7 @@ public class autoHelpMove {
     public autoHelpMove(LinearOpMode LOM, Robot theRobot) {
         linearOpMode = LOM;
         robot = theRobot;
-        ticksInInch = ((LeoOne)robot).getTicksInInch();
+        ticksInInch = robot.getTicksInInch();
     }
 
     public void driveInches(double in) {
@@ -46,7 +46,7 @@ public class autoHelpMove {
 
         // Flush bad data
         atTarget = false;
-        ((LeoOne)robot).resetDriveEncoders();
+        robot.resetDriveEncoders();
     }
 
     public void turn(double deg, boolean clockwise) {
@@ -85,12 +85,7 @@ public class autoHelpMove {
 
             timer.reset();
 
-            linearOpMode.telemetry.addData("delta: ", error);
-            linearOpMode.telemetry.addData("yaw: ", robot.getYaw());
-            linearOpMode.telemetry.addData("const: ", deg);
-            linearOpMode.telemetry.update();
-
-            if (Math.abs(deg - robot.getYaw()) < 5) {
+            if (Math.abs(deg - robot.getYaw()) < 2) {
                 atTarget = true;
             }
         }
@@ -98,6 +93,6 @@ public class autoHelpMove {
 
         // Flush bad data
         atTarget = false;
-        ((LeoOne)robot).resetDriveEncoders();
+        robot.resetDriveEncoders();
     }
 }

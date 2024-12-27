@@ -57,6 +57,8 @@ public class LeoTwo extends Robot {
         wrist = this.hardwareMap.get(CRServo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
 
+        imu = this.hardwareMap.get(IMU.class, "imu");
+
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
