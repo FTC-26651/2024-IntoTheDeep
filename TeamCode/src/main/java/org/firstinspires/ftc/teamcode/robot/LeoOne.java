@@ -20,7 +20,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class LeoOne extends Robot {
-    double targetPosition;
+    double armTargetPosition;
+    double extendTargetPosition;
     double lastPos;
 
     double driveSpeed = 1;
@@ -30,16 +31,17 @@ public class LeoOne extends Robot {
     private final ElapsedTime extendTime = new ElapsedTime();
     private final ElapsedTime armTime = new ElapsedTime();
 
-    DcMotorEx armMotor       = null;
-    DcMotorEx extensionMotor = null;
-    DcMotorEx FLD            = null;
-    DcMotorEx FRD            = null;
-    DcMotorEx BLD            = null;
-    DcMotorEx BRD            = null;
-    CRServo   wrist          = null;
-    Servo     claw           = null;
+    DcMotorEx armMotor = null;
+    DcMotorEx exM      = null;
+    DcMotorEx FLD      = null;
+    DcMotorEx FRD      = null;
+    DcMotorEx BLD      = null;
+    DcMotorEx BRD      = null;
+    CRServo   wrist    = null;
+    Servo     claw     = null;
 
     LionsDcMotorEx armMotorEx   = null;
+    LionsDcMotorEx extensionMotor = null;
     LionsDcMotorEx frontLeftDrive   = null;
     LionsDcMotorEx frontRightDrive   = null;
     LionsDcMotorEx backLeftDrive   = null;
@@ -54,7 +56,7 @@ public class LeoOne extends Robot {
     }
     public void initRobot() {
         armMotor = this.hardwareMap.get(DcMotorEx.class, "left_arm");
-        extensionMotor = this.hardwareMap.get(DcMotorEx.class, "extender");
+        exM = this.hardwareMap.get(DcMotorEx.class, "extender");
         FLD = this.hardwareMap.get(DcMotorEx.class, "left_front_drive");
         FRD = this.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         BLD = this.hardwareMap.get(DcMotorEx.class, "left_back_drive");
@@ -65,6 +67,7 @@ public class LeoOne extends Robot {
         imu = this.hardwareMap.get(IMU.class, "imu");
 
         armMotorEx = new LionsDcMotorEx(armMotor);
+        extensionMotor = new LionsDcMotorEx(exM);
         frontLeftDrive = new LionsDcMotorEx(FLD);
         frontRightDrive = new LionsDcMotorEx(FRD);
         backLeftDrive = new LionsDcMotorEx(BLD);
@@ -74,18 +77,21 @@ public class LeoOne extends Robot {
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        extensionMotor.setDirection(DcMotor.Direction.REVERSE);
 
+        armMotorEx.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotorEx.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         armMotorEx.setCurrentAlert(9.2, CurrentUnit.AMPS);
 
         armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -103,6 +109,8 @@ public class LeoOne extends Robot {
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         orientation = imu.getRobotYawPitchRollAngles();
+
+        extensionMotor.setPower(-0.1);
     }
 
     public void move(double x_axis, double y_axis, double tilt) {
@@ -175,16 +183,20 @@ public class LeoOne extends Robot {
         }
     }
 
-    public void extendArm(int inOrOut) {
-        if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3300 && armMotorEx.getCurrentPosition() > 2400) {
-            extensionMotor.setPower(inOrOut);
-            extendTime.reset();
-        } else if (extendTime.seconds() < 1.5) {
-            // Retract the arm to stay legal
-            extensionMotor.setPower(-1);
+    public void extendArm(double inOrOut) {
+        if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
+            if (inOrOut  != 0) {
+                extensionMotor.setPower(inOrOut);
+                extendTargetPosition = extensionMotor.getCurrentPosition();
+            } else {
+                extensionMotor.PID(extendTargetPosition, 0.0065, 0.001, 0.00015);
+            }
         } else {
-            extensionMotor.setPower(0);
+            extendTargetPosition = 0;
+            extensionMotor.PID(extendTargetPosition, 0.0065, 0.001, 0.00015);
         }
+        this.telemetry.addData("Ex motor turning to: ", extendTargetPosition);
+        this.telemetry.addData("Ex motor is currently: ", extensionMotor.getCurrentPosition());
     }
 
     public void moveArm(double direction) {
@@ -196,12 +208,10 @@ public class LeoOne extends Robot {
             }
             if (direction != 0) {
                 armMotorEx.setVelocity(1000 * (direction));
-                targetPosition = armMotorEx.getCurrentPosition();
+                armTargetPosition = armMotorEx.getCurrentPosition();
             } else {
-                armMotorEx.PID(targetPosition, 0.0065, 0.001, 0.00015);
+                armMotorEx.PID(armTargetPosition, 0.0065, 0.001, 0.00015);
             }
-            this.telemetry.addData("Arm motor turning to: ", targetPosition);
-            this.telemetry.addData("Arm motor is currently: ", armMotorEx.getCurrentPosition());
         }
     }
 
@@ -243,12 +253,14 @@ public class LeoOne extends Robot {
     public void runEveryLoop() {
         this.telemetry.addData("Robot speed: ", driveSpeed);
 
+        this.telemetry.addData("Extend Power: ", extensionMotor.getPower());
+
         if (isArmZeroing && (armTime.seconds() > 0.2)) {
             double pos = armMotorEx.getCurrentPosition();
             if ((Math.abs(pos - lastPos)) < 2) {
                 armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                targetPosition = 0;
+                armTargetPosition = 0;
                 armMotorEx.setVelocity(0);
                 isArmZeroing = false;
             }

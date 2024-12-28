@@ -26,7 +26,7 @@ public abstract class Robot {
     public abstract void increaseMoveSpeed();
     public abstract void decreaseMoveSpeed();
 
-    public abstract void extendArm(int inOrOut);
+    public abstract void extendArm(double inOrOut);
     public abstract void moveArm(double direction);
     public abstract void moveClaw(int direction);
     public abstract void moveWrist(int direction);

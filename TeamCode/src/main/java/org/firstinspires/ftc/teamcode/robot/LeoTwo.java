@@ -123,7 +123,7 @@ public class LeoTwo extends Robot {
         }
     }
 
-    public void extendArm(int inOrOut) {
+    public void extendArm(double inOrOut) {
         if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3300 && armMotorEx.getCurrentPosition() > 2400) {
             extensionMotor.setPower(inOrOut);
             extendTime.reset();

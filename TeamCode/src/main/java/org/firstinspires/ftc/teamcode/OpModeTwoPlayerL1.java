@@ -40,7 +40,7 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
 
             robot.move(gamepad2.left_stick_x, -1 * gamepad2.left_stick_y, -1 * gamepad2.right_stick_x);
 
-            if (gamepad2.dpad_up) {
+            if (gamepad2.right_bumper) {
                 if (!dUpIsPressed) {
                     robot.increaseMoveSpeed();
                 }
@@ -49,7 +49,7 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
                 dUpIsPressed = false;
             }
 
-            if (gamepad2.dpad_down) {
+            if (gamepad2.left_bumper) {
                 if (!dDownIsPressed) {
                     robot.decreaseMoveSpeed();
                 }
@@ -62,7 +62,7 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
             // --ARM-- //
             /////////////
 
-            robot.extendArm((gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0));
+            robot.extendArm((gamepad1.right_bumper ? 0.5 : 0) - (gamepad1.left_bumper ? 0.5 : 0));
 
             robot.moveArm(gamepad1.right_trigger - gamepad1.left_trigger);
 
