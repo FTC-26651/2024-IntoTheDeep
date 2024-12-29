@@ -9,7 +9,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -37,7 +36,7 @@ public class LeoOne extends Robot {
     DcMotorEx FRD      = null;
     DcMotorEx BLD      = null;
     DcMotorEx BRD      = null;
-    Servo     wrist    = null;
+    CRServo   wrist    = null;
     Servo     claw     = null;
 
     LionsDcMotorEx armMotorEx   = null;
@@ -61,7 +60,7 @@ public class LeoOne extends Robot {
         FRD = this.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         BLD = this.hardwareMap.get(DcMotorEx.class, "left_back_drive");
         BRD = this.hardwareMap.get(DcMotorEx.class, "right_back_drive");
-        wrist = this.hardwareMap.get(Servo.class, "wrist");
+        wrist = this.hardwareMap.get(CRServo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
 
         imu = this.hardwareMap.get(IMU.class, "imu");
@@ -80,7 +79,7 @@ public class LeoOne extends Robot {
         armMotorEx.setDirection(DcMotor.Direction.FORWARD);
         extensionMotor.setDirection(DcMotor.Direction.REVERSE);
         claw.setDirection(Servo.Direction.FORWARD);
-        wrist.setDirection(Servo.Direction.REVERSE);
+        wrist.setDirection(DcMotor.Direction.REVERSE);
 
         armMotorEx.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -221,7 +220,7 @@ public class LeoOne extends Robot {
     }
 
     public void moveWrist(double direction) {
-        wrist.setPosition(direction);
+        wrist.setPower(direction);
     }
 
     public int getArmPosition() {

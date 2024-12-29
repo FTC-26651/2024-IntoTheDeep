@@ -21,9 +21,9 @@ public class autoHelpMove {
         ((LeoOne)robot).moveWithEncoder(backLeftTarget, backRightTarget, frontLeftTarget, frontRightTarget);
 
         if (
-//            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) < 25 &&
-//            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) < 25 &&
-//            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) < 25 &&
+            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) < 25 &&
+            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) < 25 &&
+            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) < 25 &&
             (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) < 25
         ) {
             atTarget = true;
