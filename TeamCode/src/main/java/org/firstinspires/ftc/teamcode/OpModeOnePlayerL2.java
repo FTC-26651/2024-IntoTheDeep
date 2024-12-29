@@ -11,14 +11,11 @@ import com.qualcomm.robotcore.hardware.CRServo;
 public class OpModeOnePlayerL2 extends LinearOpMode {
 
     /* Declare OpMode member. */
-    public CRServo wrist = null;
     Robot robot;
 
     @Override
     public void runOpMode() {
         robot = new LeoTwo(this.hardwareMap, this.telemetry);
-
-        wrist = hardwareMap.get(CRServo.class, "wrist");
 
         robot.setName("Leo Two");
         robot.initRobot();

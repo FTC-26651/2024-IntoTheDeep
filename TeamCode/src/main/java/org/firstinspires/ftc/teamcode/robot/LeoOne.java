@@ -37,7 +37,7 @@ public class LeoOne extends Robot {
     DcMotorEx FRD      = null;
     DcMotorEx BLD      = null;
     DcMotorEx BRD      = null;
-    CRServo   wrist    = null;
+    Servo     wrist    = null;
     Servo     claw     = null;
 
     LionsDcMotorEx armMotorEx   = null;
@@ -61,7 +61,7 @@ public class LeoOne extends Robot {
         FRD = this.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         BLD = this.hardwareMap.get(DcMotorEx.class, "left_back_drive");
         BRD = this.hardwareMap.get(DcMotorEx.class, "right_back_drive");
-        wrist = this.hardwareMap.get(CRServo.class, "wrist");
+        wrist = this.hardwareMap.get(Servo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
 
         imu = this.hardwareMap.get(IMU.class, "imu");
@@ -77,7 +77,10 @@ public class LeoOne extends Robot {
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        armMotorEx.setDirection(DcMotor.Direction.FORWARD);
         extensionMotor.setDirection(DcMotor.Direction.REVERSE);
+        claw.setDirection(Servo.Direction.FORWARD);
+        wrist.setDirection(Servo.Direction.REVERSE);
 
         armMotorEx.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -100,8 +103,6 @@ public class LeoOne extends Robot {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        wrist.setDirection(DcMotorSimple.Direction.FORWARD);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
@@ -220,7 +221,7 @@ public class LeoOne extends Robot {
     }
 
     public void moveWrist(double direction) {
-        wrist.setPower(direction);
+        wrist.setPosition(direction);
     }
 
     public int getArmPosition() {

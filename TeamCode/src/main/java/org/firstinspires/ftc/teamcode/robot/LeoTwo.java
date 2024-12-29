@@ -38,7 +38,7 @@ public class LeoTwo extends Robot {
     DcMotor   extensionMotor    = null;
     DcMotor   leftDrive         = null;
     DcMotor   rightDrive        = null;
-    CRServo   wrist             = null;
+    Servo     wrist             = null;
     Servo     claw              = null;
 
     IMU imu;
@@ -54,7 +54,7 @@ public class LeoTwo extends Robot {
         extensionMotor = this.hardwareMap.get(DcMotor.class, "extender");
         leftDrive = this.hardwareMap.get(DcMotor.class, "left_front_drive");
         rightDrive = this.hardwareMap.get(DcMotor.class, "right_front_drive");
-        wrist = this.hardwareMap.get(CRServo.class, "wrist");
+        wrist = this.hardwareMap.get(Servo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
 
         imu = this.hardwareMap.get(IMU.class, "imu");
@@ -76,7 +76,7 @@ public class LeoTwo extends Robot {
         rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        wrist.setDirection(DcMotorSimple.Direction.FORWARD);
+        wrist.setDirection(Servo.Direction.FORWARD);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
@@ -157,9 +157,7 @@ public class LeoTwo extends Robot {
         claw.setPosition(direction);
     }
 
-    public void moveWrist(double direction) {
-        wrist.setPower(direction);
-    }
+    public void moveWrist(double direction) { wrist.setPosition(direction); }
 
     public int getArmPosition() {
         return armMotorEx.getCurrentPosition();

@@ -11,14 +11,11 @@ import com.qualcomm.robotcore.hardware.CRServo;
 public class OpModeOnePlayerL1 extends LinearOpMode {
 
     /* Declare OpMode member. */
-    public CRServo wrist = null;
     Robot robot;
 
     @Override
     public void runOpMode() {
         robot = new LeoOne(this.hardwareMap, this.telemetry);
-
-        wrist = hardwareMap.get(CRServo.class, "wrist");
 
         robot.setName("Leo One");
         robot.initRobot();
@@ -49,9 +46,9 @@ public class OpModeOnePlayerL1 extends LinearOpMode {
             //////////////
 
             if (gamepad1.x) {
-                robot.moveWrist(1);
-            } else if (gamepad1.y) {
                 robot.moveWrist(-0.5);
+            } else if (gamepad1.y) {
+                robot.moveWrist(0.5);
             } else {
                 robot.moveWrist(0);
             }
