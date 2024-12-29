@@ -28,8 +28,8 @@ public abstract class Robot {
 
     public abstract void extendArm(double inOrOut);
     public abstract void moveArm(double direction);
-    public abstract void moveClaw(int direction);
-    public abstract void moveWrist(int direction);
+    public abstract void moveClaw(double direction);
+    public abstract void moveWrist(double direction);
 
     public abstract int getArmPosition();
 

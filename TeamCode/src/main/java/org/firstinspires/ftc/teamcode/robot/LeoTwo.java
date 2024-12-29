@@ -153,11 +153,11 @@ public class LeoTwo extends Robot {
         }
     }
 
-    public void moveClaw(int direction) {
+    public void moveClaw(double direction) {
         claw.setPosition(direction);
     }
 
-    public void moveWrist(int direction) {
+    public void moveWrist(double direction) {
         wrist.setPower(direction);
     }
 

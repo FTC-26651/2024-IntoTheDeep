@@ -51,7 +51,7 @@ public class OpModeOnePlayerL1 extends LinearOpMode {
             if (gamepad1.x) {
                 robot.moveWrist(1);
             } else if (gamepad1.y) {
-                robot.moveWrist(-1);
+                robot.moveWrist(-0.5);
             } else {
                 robot.moveWrist(0);
             }
