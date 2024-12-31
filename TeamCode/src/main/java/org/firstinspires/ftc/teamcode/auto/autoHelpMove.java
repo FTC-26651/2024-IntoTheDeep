@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.libs.pidLib;
 import org.firstinspires.ftc.teamcode.robot.LeoOne;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
@@ -13,13 +14,11 @@ public class autoHelpMove {
 
     private boolean atTarget = false;
 
-    private final int ticksInInch;
-
     private final ElapsedTime timer = new ElapsedTime();
 
+    private final int ticksInInch;
 
-    private double driveIntegralSum = 0;
-    private double driveLastError = 0;
+    private final pidLib turnPid = new pidLib(0.05, 0.001, 0.0005);
 
     private void moveToPos(double backLeftTarget, double backRightTarget, double frontLeftTarget, double frontRightTarget) {
         ((LeoOne)robot).moveWithEncoder(backLeftTarget, backRightTarget, frontLeftTarget, frontRightTarget);
@@ -36,19 +35,7 @@ public class autoHelpMove {
     }
 
     private void _turn(double deg, boolean clockwise) {
-        double error;
-        double derivative;
-        double out;
-
-        double p = 0.05;
-        double i = 0.001;
-        double d = 0.0005;
-
-        error = deg - robot.getYaw();
-        driveIntegralSum = driveIntegralSum  + (error * timer.seconds());
-        derivative = (error - driveLastError) / timer.seconds();
-
-        out = (p * error) + (i * driveIntegralSum) + (d * derivative);
+        double out = turnPid.getPid(deg, robot.getYaw());
 
         ((LeoOne)robot).move(
                 (clockwise ? -1 : 1) * out,
@@ -56,10 +43,6 @@ public class autoHelpMove {
                 (clockwise ? -1 : 1) * out,
                 (clockwise ? 1 : -1) * out
         );
-
-        driveLastError = error;
-
-        timer.reset();
 
         if (Math.abs(deg - robot.getYaw()) < 2) {
             atTarget = true;
