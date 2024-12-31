@@ -19,14 +19,6 @@ public class LionsDcMotorEx implements DcMotorEx {
 
     private final pidLib pid = new pidLib();
 
-    double error;
-    double integralSum;
-    double derivative;
-    double lastError;
-    double out;
-
-    ElapsedTime timer = new ElapsedTime();
-
     public LionsDcMotorEx(DcMotorEx theMotor) {
         this.theMotor = theMotor;
     }
