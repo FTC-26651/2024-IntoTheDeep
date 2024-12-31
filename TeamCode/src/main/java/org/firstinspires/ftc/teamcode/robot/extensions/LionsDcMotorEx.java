@@ -12,9 +12,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.libs.pidLib;
 
 public class LionsDcMotorEx implements DcMotorEx {
     private final DcMotorEx theMotor;
+
+    private final pidLib pid = new pidLib();
 
     double error;
     double integralSum;
@@ -28,19 +31,19 @@ public class LionsDcMotorEx implements DcMotorEx {
         this.theMotor = theMotor;
     }
 
-    public void PID(double target, double p, double i, double d) {
+    public void setPid(double kP, double kI, double kD) {
+        pid.updatePid(kP, kI, kD);
+    }
+
+    public void Pid(double target) {
         if (theMotor.getCurrentPosition() != target) {
-            error = target - theMotor.getCurrentPosition();
-            integralSum = integralSum + (error * timer.seconds());
-            derivative = (error - lastError) / timer.seconds();
-
-            out = (p * error) + (i * integralSum) + (d * derivative);
-
-            theMotor.setPower(out);
-
-            lastError = error;
-
-            timer.reset();
+            theMotor.setPower(pid.getPid(target, theMotor.getCurrentPosition()));
+        }
+    }
+    public void Pid(double target, double kP, double kI, double kD) {
+        pid.updatePid(kP, kI, kD);
+        if (theMotor.getCurrentPosition() != target) {
+            theMotor.setPower(pid.getPid(target, theMotor.getCurrentPosition()));
         }
     }
 

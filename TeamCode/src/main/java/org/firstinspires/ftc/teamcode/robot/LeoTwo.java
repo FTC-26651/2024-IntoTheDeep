@@ -9,7 +9,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -77,6 +76,8 @@ public class LeoTwo extends Robot {
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wrist.setDirection(DcMotor.Direction.REVERSE);
+
+        armMotorEx.setPid(0.0065, 0.001, 0.00015);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
@@ -146,7 +147,7 @@ public class LeoTwo extends Robot {
                 armMotorEx.setVelocity(1000 * (direction));
                 targetPosition = armMotorEx.getCurrentPosition();
             } else {
-                armMotorEx.PID(targetPosition, 0.0065, 0.001, 0.00015);
+                armMotorEx.Pid(targetPosition);
             }
             this.telemetry.addData("Arm motor turning to: ", targetPosition);
             this.telemetry.addData("Arm motor is currently: ", armMotorEx.getCurrentPosition());
@@ -157,7 +158,7 @@ public class LeoTwo extends Robot {
         claw.setPosition(direction);
     }
 
-    public void moveWrist(double direction) { wrist.setPower(direction); }
+    public void moveWrist(double direction) { wrist.setPower(direction);  }
 
     public int getArmPosition() {
         return armMotorEx.getCurrentPosition();

@@ -9,6 +9,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -47,6 +48,7 @@ public class LeoOne extends Robot {
     LionsDcMotorEx backRightDrive   = null;
 
     IMU imu;
+    DistanceSensor distanceSensor;
 
     YawPitchRollAngles orientation;
 
@@ -64,6 +66,7 @@ public class LeoOne extends Robot {
         claw = this.hardwareMap.get(Servo.class, "claw");
 
         imu = this.hardwareMap.get(IMU.class, "imu");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "dist");
 
         armMotorEx = new LionsDcMotorEx(armMotor);
         extensionMotor = new LionsDcMotorEx(exM);
@@ -103,6 +106,13 @@ public class LeoOne extends Robot {
         backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        armMotorEx.setPid(0.0065, 0.001, 0.00015);
+        extensionMotor.setPid(0.0065, 0.001, 0.00015);
+        frontLeftDrive.setPid(0.2, 0.001, 0.0005);
+        frontRightDrive.setPid(0.2, 0.001, 0.0005);
+        backLeftDrive.setPid(0.2, 0.001, 0.0005);
+        backRightDrive.setPid(0.2, 0.001, 0.0005);
+
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -138,10 +148,10 @@ public class LeoOne extends Robot {
     }
 
     public void moveWithEncoder(double backLeft, double backRight, double frontLeft, double frontRight) {
-        backLeftDrive.PID(backLeft, 0.2, 0.001, 0.0005);
-        backRightDrive.PID(backRight, 0.2, 0.001, 0.0005);
-        frontLeftDrive.PID(frontLeft, 0.2, 0.001, 0.0005);
-        frontRightDrive.PID(frontRight, 0.2, 0.001, 0.0005);
+        backLeftDrive.Pid(backLeft);
+        backRightDrive.Pid(backRight);
+        frontLeftDrive.Pid(frontLeft);
+        frontRightDrive.Pid(frontRight);
     }
 
     public int getTicksInInch() {
@@ -189,11 +199,11 @@ public class LeoOne extends Robot {
                 extensionMotor.setPower(inOrOut);
                 extendTargetPosition = extensionMotor.getCurrentPosition();
             } else {
-                extensionMotor.PID(extendTargetPosition, 0.0065, 0.001, 0.00015);
+                extensionMotor.Pid(extendTargetPosition);
             }
         } else {
             extendTargetPosition = 0;
-            extensionMotor.PID(extendTargetPosition, 0.0065, 0.001, 0.00015);
+            extensionMotor.Pid(extendTargetPosition);
         }
         this.telemetry.addData("Ex motor turning to: ", extendTargetPosition);
         this.telemetry.addData("Ex motor is currently: ", extensionMotor.getCurrentPosition());
@@ -210,9 +220,14 @@ public class LeoOne extends Robot {
                 armMotorEx.setVelocity(1000 * (direction));
                 armTargetPosition = armMotorEx.getCurrentPosition();
             } else {
-                armMotorEx.PID(armTargetPosition, 0.0065, 0.001, 0.00015);
+                armMotorEx.Pid(armTargetPosition);
             }
         }
+    }
+
+    public void moveArmToPos(int pos) {
+        armTargetPosition = pos;
+        armMotorEx.Pid(armTargetPosition);
     }
 
     public void moveClaw(double direction) {

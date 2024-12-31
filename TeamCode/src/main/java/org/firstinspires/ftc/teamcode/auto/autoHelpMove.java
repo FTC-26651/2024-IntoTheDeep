@@ -17,17 +17,52 @@ public class autoHelpMove {
 
     private final ElapsedTime timer = new ElapsedTime();
 
+
+    private double driveIntegralSum = 0;
+    private double driveLastError = 0;
+
     private void moveToPos(double backLeftTarget, double backRightTarget, double frontLeftTarget, double frontRightTarget) {
         ((LeoOne)robot).moveWithEncoder(backLeftTarget, backRightTarget, frontLeftTarget, frontRightTarget);
 
         if (
-            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) < 25 &&
-            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) < 25 &&
-            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) < 25 &&
-            (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) < 25
+            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) < 10 &&
+            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) < 10 &&
+            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) < 10 &&
+            (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) < 10
         ) {
             atTarget = true;
             robot.move(0, 0, 0);
+        }
+    }
+
+    private void _turn(double deg, boolean clockwise) {
+        double error;
+        double derivative;
+        double out;
+
+        double p = 0.05;
+        double i = 0.001;
+        double d = 0.0005;
+
+        error = deg - robot.getYaw();
+        driveIntegralSum = driveIntegralSum  + (error * timer.seconds());
+        derivative = (error - driveLastError) / timer.seconds();
+
+        out = (p * error) + (i * driveIntegralSum) + (d * derivative);
+
+        ((LeoOne)robot).move(
+                (clockwise ? -1 : 1) * out,
+                (clockwise ? 1 : -1) * out,
+                (clockwise ? -1 : 1) * out,
+                (clockwise ? 1 : -1) * out
+        );
+
+        driveLastError = error;
+
+        timer.reset();
+
+        if (Math.abs(deg - robot.getYaw()) < 2) {
+            atTarget = true;
         }
     }
 
@@ -50,44 +85,10 @@ public class autoHelpMove {
     }
 
     public void turn(double deg, boolean clockwise) {
-        /*
-        Robot is 18 inches, or 9 inches in radius.
-
-        2πr = 2π9 = 360 = π/20 inches needed per degree
-        */
         robot.resetYaw();
 
-        double error;
-        double integralSum = 0;
-        double derivative;
-        double out;
-        double lastError = 0;
-
-        double p = 0.05;
-        double i = 0.001;
-        double d = 0.0005;
-
         while (linearOpMode.opModeIsActive() && !atTarget) {
-            error = deg - robot.getYaw();
-            integralSum = integralSum + (error * timer.seconds());
-            derivative = (error - lastError) / timer.seconds();
-
-            out = (p * error) + (i * integralSum) + (d * derivative);
-
-            ((LeoOne)robot).move(
-                (clockwise ? -1 : 1) * out,
-                (clockwise ? 1 : -1) * out,
-                (clockwise ? -1 : 1) * out,
-                (clockwise ? 1 : -1) * out
-            );
-
-            lastError = error;
-
-            timer.reset();
-
-            if (Math.abs(deg - robot.getYaw()) < 2) {
-                atTarget = true;
-            }
+            _turn(deg, clockwise);
         }
         robot.move(0, 0, 0);
 

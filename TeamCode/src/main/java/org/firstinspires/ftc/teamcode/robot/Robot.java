@@ -7,7 +7,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public abstract class Robot {
     private char team;
     private String name;
-    private String errors;
     protected HardwareMap hardwareMap;
     protected Telemetry telemetry;
 
@@ -42,7 +41,7 @@ public abstract class Robot {
     public abstract void setArmPositionZero();
 
     // Define a function that is called every time through the main loop
-    public void runEveryLoop() {};
+    public void runEveryLoop() {}
 
     public void setTeam(char color) {
         if (color == 'b') {
@@ -50,7 +49,7 @@ public abstract class Robot {
         } else if (color == 'r') {
             team = 'r';
         } else {
-            // Complain about an invalid team
+            telemetry.addLine("Invalid Team");
         }
     }
 
@@ -64,15 +63,5 @@ public abstract class Robot {
 
     public String getName() {
         return name;
-    }
-
-    public boolean hasErrors() {
-        return !(errors.isEmpty());
-    }
-    public void setErrors(String iErrors) {
-        errors = iErrors;
-    }
-    public String getErrors() {
-        return errors;
     }
 }
