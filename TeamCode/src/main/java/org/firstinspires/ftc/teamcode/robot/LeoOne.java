@@ -27,8 +27,7 @@ public class LeoOne extends Robot {
     double driveSpeed = 1;
 
     boolean isArmZeroing = false;
-
-    private final ElapsedTime extendTime = new ElapsedTime();
+    
     private final ElapsedTime armTime = new ElapsedTime();
 
     DcMotorEx armMotor = null;
