@@ -21,12 +21,16 @@ public abstract class Robot {
     public abstract int getTicksInInch();
 
     public abstract void move(double x_axis, double y_axis, double tilt);
+    public abstract void stopDrive();
     public abstract void resetDriveEncoders();
     public abstract void increaseMoveSpeed();
     public abstract void decreaseMoveSpeed();
 
     public abstract void extendArm(double inOrOut);
     public abstract void moveArm(double direction);
+    public abstract void moveArmToPos(int pos);
+    public abstract void stopArm();
+
     public abstract void moveClaw(double direction);
     public abstract void moveWrist(double direction);
 

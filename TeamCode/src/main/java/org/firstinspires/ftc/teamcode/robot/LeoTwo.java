@@ -102,6 +102,11 @@ public class LeoTwo extends Robot {
         rightDrive.setPower(right * driveSpeed);
     }
 
+    public void stopDrive() {
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
+
     public int getTicksInInch() {
         return 58;
     }
@@ -154,11 +159,14 @@ public class LeoTwo extends Robot {
         }
     }
 
-    public void moveClaw(double direction) {
-        claw.setPosition(direction);
+    public void moveArmToPos(int pos) {
+        targetPosition = pos;
+        armMotorEx.Pid(targetPosition);
     }
 
-    public void moveWrist(double direction) { wrist.setPower(direction);  }
+    public void stopArm() {
+        armMotorEx.setPower(0);
+    }
 
     public int getArmPosition() {
         return armMotorEx.getCurrentPosition();
@@ -168,6 +176,14 @@ public class LeoTwo extends Robot {
         isArmZeroing = true;
         lastPos = armMotorEx.getCurrentPosition();
         armMotorEx.setVelocity(10000);
+    }
+
+    public void moveClaw(double direction) {
+        claw.setPosition(direction);
+    }
+
+    public void moveWrist(double direction) {
+        wrist.setPower(direction);
     }
 
     public double getYaw() {

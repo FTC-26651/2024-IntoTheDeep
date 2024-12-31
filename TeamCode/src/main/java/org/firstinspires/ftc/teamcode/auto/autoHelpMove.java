@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class autoHelpMove {
+    /* Variables */
     private final Robot robot;
     private final LinearOpMode linearOpMode;
 
@@ -20,6 +21,8 @@ public class autoHelpMove {
 
     private final pidLib turnPid = new pidLib(0.05, 0.001, 0.0005);
 
+    /* Private Methods */
+
     private void moveToPos(double backLeftTarget, double backRightTarget, double frontLeftTarget, double frontRightTarget) {
         ((LeoOne)robot).moveWithEncoder(backLeftTarget, backRightTarget, frontLeftTarget, frontRightTarget);
 
@@ -30,7 +33,7 @@ public class autoHelpMove {
             (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) < 10
         ) {
             atTarget = true;
-            robot.move(0, 0, 0);
+            robot.stopDrive();
         }
     }
 
@@ -49,11 +52,19 @@ public class autoHelpMove {
         }
     }
 
+    private void _moveArmToPos(int pos) {
+        ((LeoOne)robot).moveArmToPos(pos);
+    }
+
+    /* Constructor */
+
     public autoHelpMove(LinearOpMode LOM, Robot theRobot) {
         linearOpMode = LOM;
         robot = theRobot;
         ticksInInch = robot.getTicksInInch();
     }
+
+    /* Public Methods */
 
     public void driveInches(double in) {
         double pos = ticksInInch * in;
@@ -67,16 +78,30 @@ public class autoHelpMove {
         robot.resetDriveEncoders();
     }
 
+    public void driveUntilDist(double in) {
+        while (((LeoOne)robot).getDist() > in) {
+            robot.move(1, 0, 0);
+        }
+        robot.stopDrive();
+    }
+
     public void turn(double deg, boolean clockwise) {
         robot.resetYaw();
 
         while (linearOpMode.opModeIsActive() && !atTarget) {
             _turn(deg, clockwise);
         }
-        robot.move(0, 0, 0);
 
         // Flush bad data
+        robot.stopDrive();
         atTarget = false;
         robot.resetDriveEncoders();
+    }
+
+    private void moveArmToPos(int pos) {
+        while (Math.abs(pos - robot.getArmPosition()) < 10) {
+            robot.moveArmToPos(pos);
+        }
+        robot.stopArm();
     }
 }

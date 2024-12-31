@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.robot.extensions.LionsDcMotorEx;
 
@@ -27,7 +28,7 @@ public class LeoOne extends Robot {
     double driveSpeed = 1;
 
     boolean isArmZeroing = false;
-    
+
     private final ElapsedTime armTime = new ElapsedTime();
 
     DcMotorEx armMotor = null;
@@ -153,6 +154,13 @@ public class LeoOne extends Robot {
         frontRightDrive.Pid(frontRight);
     }
 
+    public void stopDrive() {
+        backLeftDrive.setPower(0);
+        frontLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+        frontRightDrive.setPower(0);
+    }
+
     public int getTicksInInch() {
         return 58;
     }
@@ -229,6 +237,20 @@ public class LeoOne extends Robot {
         armMotorEx.Pid(armTargetPosition);
     }
 
+    public int getArmPosition() {
+        return armMotorEx.getCurrentPosition();
+    }
+
+    public void stopArm() {
+        armMotorEx.setPower(0);
+    }
+
+    public void setArmPositionZero() {
+        isArmZeroing = true;
+        lastPos = armMotorEx.getCurrentPosition();
+        armMotorEx.setVelocity(1000 * (-0.8));
+    }
+
     public void moveClaw(double direction) {
         claw.setPosition(direction);
     }
@@ -237,14 +259,8 @@ public class LeoOne extends Robot {
         wrist.setPower(direction);
     }
 
-    public int getArmPosition() {
-        return armMotorEx.getCurrentPosition();
-    }
-
-    public void setArmPositionZero() {
-        isArmZeroing = true;
-        lastPos = armMotorEx.getCurrentPosition();
-        armMotorEx.setVelocity(1000 * (-0.8));
+    public double getDist() {
+        return distanceSensor.getDistance(DistanceUnit.INCH);
     }
 
     public double getYaw() {
