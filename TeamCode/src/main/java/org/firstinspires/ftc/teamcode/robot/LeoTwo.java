@@ -79,6 +79,8 @@ public class LeoTwo extends Robot {
 
         armMotorEx.setPid(0.0065, 0.001, 0.00015);
 
+        claw.setPosition(0);
+
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);

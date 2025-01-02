@@ -113,6 +113,8 @@ public class LeoOne extends Robot {
         backLeftDrive.setPid(0.2, 0.001, 0.0005);
         backRightDrive.setPid(0.2, 0.001, 0.0005);
 
+        //claw.setPosition(0);
+
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -120,7 +122,7 @@ public class LeoOne extends Robot {
 
         orientation = imu.getRobotYawPitchRollAngles();
 
-        extensionMotor.setPower(-0.1);
+        //extensionMotor.setPower(-0.1);
     }
 
     public void move(double x_axis, double y_axis, double tilt) {
@@ -202,7 +204,7 @@ public class LeoOne extends Robot {
 
     public void extendArm(double inOrOut) {
         if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
-            if (inOrOut  != 0) {
+            if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 3500) {
                 extensionMotor.setPower(inOrOut);
                 extendTargetPosition = extensionMotor.getCurrentPosition();
             } else {
@@ -214,6 +216,10 @@ public class LeoOne extends Robot {
         }
         this.telemetry.addData("Ex motor turning to: ", extendTargetPosition);
         this.telemetry.addData("Ex motor is currently: ", extensionMotor.getCurrentPosition());
+    }
+
+    public int getExtendPosition() {
+        return extensionMotor.getCurrentPosition();
     }
 
     public void moveArm(double direction) {
