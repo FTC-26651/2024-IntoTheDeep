@@ -21,15 +21,18 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class LeoOne extends Robot {
+    boolean isArmZeroing = false;
+
     double armTargetPosition;
     double extendTargetPosition;
     double lastPos;
 
     double driveSpeed = 1;
 
-    boolean isArmZeroing = false;
+    int lastExtendPos;
 
     private final ElapsedTime armTime = new ElapsedTime();
+    private final ElapsedTime extendTime = new ElapsedTime();
 
     DcMotorEx armMotor = null;
     DcMotorEx exM      = null;
@@ -212,7 +215,16 @@ public class LeoOne extends Robot {
             }
         } else {
             extendTargetPosition = 0;
-            extensionMotor.Pid(extendTargetPosition);
+            if (Math.abs(lastExtendPos - extensionMotor.getCurrentPosition()) > 3) {
+                extensionMotor.Pid(extendTargetPosition);
+            } else {
+                extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+        }
+        if (extendTime.seconds() < 0.2) {
+            lastExtendPos = extensionMotor.getCurrentPosition();
+            extendTime.reset();
         }
         this.telemetry.addData("Ex motor turning to: ", extendTargetPosition);
         this.telemetry.addData("Ex motor is currently: ", extensionMotor.getCurrentPosition());
