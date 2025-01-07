@@ -109,7 +109,7 @@ public class LeoOne extends Robot {
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         armMotorEx.setPid(0.0025, 0.001, 0.00015);
-        extensionMotor.setPid(0.0015, 0.001, 0.00015);
+        extensionMotor.setPid(0.00009, 0.00005, 0.00005);
         frontLeftDrive.setPid(0.2, 0.001, 0.0005);
         frontRightDrive.setPid(0.2, 0.001, 0.0005);
         backLeftDrive.setPid(0.2, 0.001, 0.0005);
@@ -208,6 +208,7 @@ public class LeoOne extends Robot {
         if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
             if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 3500) {
                 extensionMotor.setPower(inOrOut);
+
                 extendTargetPosition = extensionMotor.getCurrentPosition();
             } else {
                 extensionMotor.Pid(extendTargetPosition);
