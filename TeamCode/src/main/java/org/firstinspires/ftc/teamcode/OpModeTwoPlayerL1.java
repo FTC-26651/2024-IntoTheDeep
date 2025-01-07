@@ -59,7 +59,8 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
             // --ARM-- //
             /////////////
 
-            robot.extendArm((gamepad1.right_bumper ? 0.5 : 0) - (gamepad1.left_bumper ? 0.5 : 0));
+            telemetry.addData("l1: ", gamepad1.left_bumper);
+            robot.extendArm((gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0));
 
             robot.moveArm(gamepad1.right_trigger - gamepad1.left_trigger);
 

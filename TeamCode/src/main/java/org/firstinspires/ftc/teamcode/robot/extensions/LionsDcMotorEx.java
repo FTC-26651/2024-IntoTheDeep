@@ -28,15 +28,11 @@ public class LionsDcMotorEx implements DcMotorEx {
     }
 
     public void Pid(double target) {
-        if (theMotor.getCurrentPosition() != target) {
-            theMotor.setPower(pid.getPid(target, theMotor.getCurrentPosition()));
-        }
+        theMotor.setPower(pid.getPid(target, theMotor.getCurrentPosition()));
     }
     public void Pid(double target, double kP, double kI, double kD) {
         pid.updatePid(kP, kI, kD);
-        if (theMotor.getCurrentPosition() != target) {
-            theMotor.setPower(pid.getPid(target, theMotor.getCurrentPosition()));
-        }
+        theMotor.setPower(pid.getPid(target, theMotor.getCurrentPosition()));
     }
 
     // Implement ALL of the necessary methods...wugh //
