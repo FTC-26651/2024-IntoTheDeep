@@ -213,9 +213,10 @@ public class LeoOne extends Robot {
             } else {
                 extensionMotor.Pid(extendTargetPosition);
             }
+            extendTime.reset();
         } else {
             extendTargetPosition = 0;
-            if (Math.abs(lastExtendPos - extensionMotor.getCurrentPosition()) < 3) {
+            if (Math.abs(lastExtendPos - extensionMotor.getCurrentPosition()) > 3) {
                 extensionMotor.Pid(extendTargetPosition);
             } else {
                 extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -223,15 +224,14 @@ public class LeoOne extends Robot {
                 extensionMotor.Pid(extendTargetPosition);
             }
         }
-        if (extendTime.seconds() < 0.2) {
+        if (extendTime.seconds() < 1) {
             lastExtendPos = extensionMotor.getCurrentPosition();
             extendTime.reset();
         }
-
-        this.telemetry.addData("Ex motor turning to: ", extendTargetPosition);
+        this.telemetry.addData("last Pos: ", lastExtendPos);
         this.telemetry.addData("Ex motor is currently: ", extensionMotor.getCurrentPosition());
     }
-
+    
     public int getExtendPosition() {
         return extensionMotor.getCurrentPosition();
     }
