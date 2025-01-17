@@ -53,7 +53,7 @@ public class autoHelpMove {
     }
 
     private void _moveArmToPos(int pos) {
-        ((LeoOne)robot).moveArmToPos(pos);
+        robot.moveArmToPos(pos);
     }
 
     /* Constructor */
@@ -98,10 +98,25 @@ public class autoHelpMove {
         robot.resetDriveEncoders();
     }
 
-    private void moveArmToPos(int pos) {
+    public void moveArmToPos(int pos) {
         while (Math.abs(pos - robot.getArmPosition()) < 10) {
-            robot.moveArmToPos(pos);
+            _moveArmToPos(pos);
         }
         robot.stopArm();
     }
+
+    public void openClaw() {
+        robot.moveClaw(1);
+    }
+
+    public void closeClaw() {
+        robot.moveClaw(0);
+    }
+
+    /* Multithread */
+     public void moveUntilDistAndArm(double in, int pos) {
+         while (((LeoOne)robot).getDist() > in) {
+             robot.move(1, 0, 0);
+         }
+     }
 }

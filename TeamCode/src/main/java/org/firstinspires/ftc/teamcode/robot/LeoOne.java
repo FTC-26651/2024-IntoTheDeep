@@ -219,7 +219,6 @@ public class LeoOne extends Robot {
             }
             extendTime.reset();
         } else {
-            extensionMotor.setPower(-1);
             if (extendTime.seconds() > 0.2) {
                 double extendPos = extensionMotor.getCurrentPosition();
                 if ((Math.abs(extendPos - lastExtendPos)) < 2) {
@@ -276,7 +275,6 @@ public class LeoOne extends Robot {
     }
 
     public void moveClaw(double direction) {
-        telemetry.addData("Arm Pos", armMotorEx.getCurrentPosition());
         if (armMotorEx.getCurrentPosition() < 1500) {
             claw.setPosition(1);
         } else {
