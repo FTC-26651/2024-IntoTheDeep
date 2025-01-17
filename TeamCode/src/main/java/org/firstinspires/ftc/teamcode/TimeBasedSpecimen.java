@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.robot.LeoTwo;
+import org.firstinspires.ftc.teamcode.robot.LeoOne;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,15 +12,12 @@ public class TimeBasedSpecimen extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
     double speed = 0.5;
-    double short_turn = 0.4;
-    double long_turn = 1.0;
-    double path_to_submersible = 0.65;
     Robot robot;
 
     @Override
     public void runOpMode() {
-        robot = new LeoTwo(this.hardwareMap, this.telemetry);
-        robot.setName("Leo Two");
+        robot = new LeoOne(this.hardwareMap, this.telemetry);
+        robot.setName("LeoOne");
         robot.initRobot();
 
         robot.moveClaw(1);

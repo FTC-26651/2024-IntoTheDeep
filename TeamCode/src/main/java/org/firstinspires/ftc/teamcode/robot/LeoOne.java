@@ -241,6 +241,15 @@ public class LeoOne extends Robot {
         return extensionMotor.getCurrentPosition();
     }
 
+    public void extendToPos(int pos) {
+        extendTargetPosition = pos;
+        extensionMotor.Pid(extendTargetPosition);
+    }
+
+    public void stopExtend() {
+        extensionMotor.setPower(0);
+    }
+
     public void moveArm(double direction) {
         if(!isArmZeroing) {
             if (armMotorEx.isOverCurrent()){

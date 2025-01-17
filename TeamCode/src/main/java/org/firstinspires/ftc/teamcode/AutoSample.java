@@ -35,5 +35,19 @@ public class AutoSample extends LinearOpMode {
 
         /* Specimen 1 */
         auto.turn(90, false);
+        auto.driveInches(50);
+        auto.turn(90, true);
+        auto.moveArmToPos(5000);
+        auto.closeClaw();
+
+        auto.turnAndArm(120, false, 2500);
+        auto.extendToPos(2000);
+        auto.openClaw();
+
+        /* Park */
+        auto.turnAndArm(180, true, 0);
+        auto.driveInches(45);
+        auto.turn(30, true);
+        auto.moveArmToPos(2900);
     }
 }

@@ -15,8 +15,6 @@ public class autoHelpMove {
 
     private boolean atTarget = false;
 
-    private final ElapsedTime timer = new ElapsedTime();
-
     private final int ticksInInch;
 
     private final pidLib drivePid = new pidLib(0.05, 0.001, 0.0005);
@@ -57,6 +55,10 @@ public class autoHelpMove {
         robot.moveArmToPos(pos);
     }
 
+    private void _extendToPos(int pos) {
+        ((LeoOne)robot).extendToPos(pos);
+    }
+
     /* Constructor */
 
     public autoHelpMove(LinearOpMode LOM, Robot theRobot) {
@@ -75,6 +77,7 @@ public class autoHelpMove {
         }
 
         // Flush bad data
+        robot.stopDrive();
         atTarget = false;
         robot.resetDriveEncoders();
     }
@@ -84,6 +87,9 @@ public class autoHelpMove {
             robot.move(1, 0, 0);
         }
         robot.stopDrive();
+
+        // Flush bad data
+        robot.resetDriveEncoders();
     }
 
     public void turn(double deg, boolean clockwise) {
@@ -97,6 +103,12 @@ public class autoHelpMove {
         robot.stopDrive();
         atTarget = false;
         robot.resetDriveEncoders();
+    }
+
+    public void extendToPos(int pos) {
+        while (Math.abs(pos - ((LeoOne)robot).getExtendPosition()) < 10) {
+            _extendToPos(pos);
+        }
     }
 
     public void moveArmToPos(int pos) {
@@ -114,14 +126,37 @@ public class autoHelpMove {
         robot.moveClaw(0);
     }
 
-    /* Multithread */
+    /* MultiThread */
      public void moveUntilDistAndArm(double in, int pos) {
          while (
-                 ((LeoOne)robot).getDist() > in
-                 && Math.abs(pos - robot.getArmPosition()) < 10
+                 linearOpMode.opModeIsActive() &&
+                 ((LeoOne)robot).getDist() > in &&
+                 Math.abs(pos - robot.getArmPosition()) < 10
          ) {
              robot.move(drivePid.getPid(in, ((LeoOne)robot).getDist()), 0, 0);
              _moveArmToPos(pos);
          }
+
+         // Flush bad data
+         robot.stopDrive();
+         robot.resetDriveEncoders();
      }
+
+    public void turnAndArm(double deg, boolean clockwise, int pos) {
+        robot.resetYaw();
+
+        while (
+                linearOpMode.opModeIsActive() &&
+                !atTarget &&
+                Math.abs(pos - robot.getArmPosition()) < 10
+        ) {
+            _turn(deg, clockwise);
+            _moveArmToPos(pos);
+        }
+
+        // Flush bad data
+        robot.stopDrive();
+        atTarget = false;
+        robot.resetDriveEncoders();
+    }
 }
