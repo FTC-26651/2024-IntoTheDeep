@@ -115,7 +115,7 @@ public class LeoOne extends Robot {
         backLeftDrive.setPid(0.2, 0.001, 0.0005);
         backRightDrive.setPid(0.2, 0.001, 0.0005);
 
-        //claw.setPosition(0);
+        claw.scaleRange(0.30, 1);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
@@ -205,28 +205,32 @@ public class LeoOne extends Robot {
     }
 
     public void extendArm(double inOrOut) {
-        if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
-            if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 3500) {
-                extensionMotor.setPower(inOrOut);
+        if (extendTime.seconds() < 1) {
+            lastExtendPos = extensionMotor.getCurrentPosition();
+            extendTime.reset();
+        }
 
+        if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
+            if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 2000) {
+                extensionMotor.setPower(inOrOut);
                 extendTargetPosition = extensionMotor.getCurrentPosition();
             } else {
                 extensionMotor.Pid(extendTargetPosition);
             }
             extendTime.reset();
         } else {
-            extendTargetPosition = 0;
-            if (Math.abs(lastExtendPos - extensionMotor.getCurrentPosition()) > 3) {
-                extensionMotor.Pid(extendTargetPosition);
-            } else {
-                extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                extensionMotor.Pid(extendTargetPosition);
+            extensionMotor.setPower(-1);
+            if (extendTime.seconds() > 0.2) {
+                double extendPos = extensionMotor.getCurrentPosition();
+                if ((Math.abs(extendPos - lastExtendPos)) < 2) {
+                    extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    extendTargetPosition = 0;
+                    extensionMotor.setVelocity(0);
+                }
+                lastArmPos = extendPos;
+                armTime.reset();
             }
-        }
-        if (extendTime.seconds() < 1) {
-            lastExtendPos = extensionMotor.getCurrentPosition();
-            extendTime.reset();
         }
         this.telemetry.addData("last Pos: ", lastExtendPos);
         this.telemetry.addData("Ex motor is currently: ", extensionMotor.getCurrentPosition());
@@ -272,7 +276,12 @@ public class LeoOne extends Robot {
     }
 
     public void moveClaw(double direction) {
-        claw.setPosition(direction);
+        telemetry.addData("Arm Pos", armMotorEx.getCurrentPosition());
+        if (armMotorEx.getCurrentPosition() < 1500) {
+            claw.setPosition(1);
+        } else {
+            claw.setPosition(direction);
+        }
     }
 
     public void moveWrist(double direction) {

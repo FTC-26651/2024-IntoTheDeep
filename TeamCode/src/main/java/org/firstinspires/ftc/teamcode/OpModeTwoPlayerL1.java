@@ -35,7 +35,8 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
             // --DRIVE-- //
             ///////////////
 
-            robot.move(gamepad2.left_stick_x, -1 * gamepad2.left_stick_y, -1 * gamepad2.right_stick_x);
+            telemetry.addLine("Hello World");
+            robot.move(gamepad2.left_stick_x, gamepad2.left_stick_y, -1 * gamepad2.right_stick_x);
 
             if (gamepad2.right_bumper) {
                 if (!dUpIsPressed) {
