@@ -29,6 +29,7 @@ public class LeoOne extends Robot {
     double driveSpeed = 1;
 
     boolean isArmZeroing = false;
+    boolean extensionAtZero = false;
 
     private final ElapsedTime armTime = new ElapsedTime();
     private final ElapsedTime extendTime = new ElapsedTime();
@@ -39,7 +40,7 @@ public class LeoOne extends Robot {
     DcMotorEx FRD      = null;
     DcMotorEx BLD      = null;
     DcMotorEx BRD      = null;
-    CRServo   wrist    = null;
+    Servo     wrist    = null;
     Servo     claw     = null;
 
     LionsDcMotorEx armMotorEx   = null;
@@ -64,7 +65,7 @@ public class LeoOne extends Robot {
         FRD = this.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         BLD = this.hardwareMap.get(DcMotorEx.class, "left_back_drive");
         BRD = this.hardwareMap.get(DcMotorEx.class, "right_back_drive");
-        wrist = this.hardwareMap.get(CRServo.class, "wrist");
+        wrist = this.hardwareMap.get(Servo.class, "wrist");
         claw = this.hardwareMap.get(Servo.class, "claw");
 
         imu = this.hardwareMap.get(IMU.class, "imu");
@@ -84,7 +85,7 @@ public class LeoOne extends Robot {
         armMotorEx.setDirection(DcMotor.Direction.FORWARD);
         extensionMotor.setDirection(DcMotor.Direction.REVERSE);
         claw.setDirection(Servo.Direction.FORWARD);
-        wrist.setDirection(DcMotor.Direction.REVERSE);
+        wrist.setDirection(Servo.Direction.REVERSE);
 
         armMotorEx.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -116,6 +117,7 @@ public class LeoOne extends Robot {
         backRightDrive.setPid(0.2, 0.001, 0.0005);
 
         claw.scaleRange(0.30, 1);
+        wrist.scaleRange(0.25, 10.75);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
@@ -205,9 +207,8 @@ public class LeoOne extends Robot {
     }
 
     public void extendArm(double inOrOut) {
-        if (extendTime.seconds() < 1) {
-            lastExtendPos = extensionMotor.getCurrentPosition();
-            extendTime.reset();
+        if ((Math.abs(extensionMotor.getCurrentPosition() - lastExtendPos)) > 2) {
+            extensionAtZero = false;
         }
 
         if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
@@ -218,7 +219,7 @@ public class LeoOne extends Robot {
                 extensionMotor.Pid(extendTargetPosition);
             }
             extendTime.reset();
-        } else {
+        } else if (!extensionAtZero) {
             if (extendTime.seconds() > 0.2) {
                 double extendPos = extensionMotor.getCurrentPosition();
                 if ((Math.abs(extendPos - lastExtendPos)) < 2) {
@@ -226,6 +227,7 @@ public class LeoOne extends Robot {
                     extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     extendTargetPosition = 0;
                     extensionMotor.setVelocity(0);
+                    extensionAtZero = true;
                 }
                 lastArmPos = extendPos;
                 armTime.reset();
@@ -275,15 +277,16 @@ public class LeoOne extends Robot {
     }
 
     public void moveClaw(double direction) {
-        if (armMotorEx.getCurrentPosition() < 1500) {
-            claw.setPosition(1);
-        } else {
-            claw.setPosition(direction);
-        }
+        claw.setPosition(direction);
+
     }
 
     public void moveWrist(double direction) {
-        wrist.setPower(direction);
+        if (armMotorEx.getCurrentPosition() < 1500) {
+            wrist.setPosition(1);
+        } else {
+            wrist.setPosition(direction);
+        }
     }
 
     public double getDist() {

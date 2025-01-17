@@ -19,6 +19,7 @@ public class autoHelpMove {
 
     private final int ticksInInch;
 
+    private final pidLib drivePid = new pidLib(0.05, 0.001, 0.0005);
     private final pidLib turnPid = new pidLib(0.05, 0.001, 0.0005);
 
     /* Private Methods */
@@ -115,8 +116,12 @@ public class autoHelpMove {
 
     /* Multithread */
      public void moveUntilDistAndArm(double in, int pos) {
-         while (((LeoOne)robot).getDist() > in) {
-             robot.move(1, 0, 0);
+         while (
+                 ((LeoOne)robot).getDist() > in
+                 && Math.abs(pos - robot.getArmPosition()) < 10
+         ) {
+             robot.move(drivePid.getPid(in, ((LeoOne)robot).getDist()), 0, 0);
+             _moveArmToPos(pos);
          }
      }
 }

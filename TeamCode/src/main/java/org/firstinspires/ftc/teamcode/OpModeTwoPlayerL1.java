@@ -70,11 +70,11 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
             //////////////
 
             if (gamepad1.x) {
-                robot.moveWrist(-0.5);
-            } else if (gamepad1.y) {
-                robot.moveWrist(0.5);
-            } else {
                 robot.moveWrist(0);
+            } else if (gamepad1.y) {
+                robot.moveWrist(1);
+            } else {
+                robot.moveWrist(0.5);
             }
 
             if (gamepad1.a) {

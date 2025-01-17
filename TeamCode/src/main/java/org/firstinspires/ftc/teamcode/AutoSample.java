@@ -27,8 +27,13 @@ public class AutoSample extends LinearOpMode {
 
         waitForStart();
 
-        auto.driveUntilDist(25);
-        auto.moveArmToPos(4000);
+        /* Sample */
+        auto.moveUntilDistAndArm(25, 4000);
+//        auto.driveUntilDist(25);
+//        auto.moveArmToPos(4000);
         auto.openClaw();
+
+        /* Specimen 1 */
+        auto.turn(90, false);
     }
 }
