@@ -35,7 +35,6 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
             // --DRIVE-- //
             ///////////////
 
-            telemetry.addLine("Hello World");
             robot.move(gamepad2.left_stick_x, gamepad2.left_stick_y, -1 * gamepad2.right_stick_x);
 
             if (gamepad2.right_bumper) {
@@ -60,7 +59,6 @@ public class OpModeTwoPlayerL1 extends LinearOpMode {
             // --ARM-- //
             /////////////
 
-            telemetry.addData("l1: ", gamepad1.left_bumper);
             robot.extendArm((gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0));
 
             robot.moveArm(gamepad1.right_trigger - gamepad1.left_trigger);

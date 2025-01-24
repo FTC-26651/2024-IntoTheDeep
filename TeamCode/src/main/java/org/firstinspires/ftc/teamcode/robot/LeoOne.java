@@ -117,7 +117,7 @@ public class LeoOne extends Robot {
         backRightDrive.setPid(0.2, 0.001, 0.0005);
 
         claw.scaleRange(0.30, 1);
-        wrist.scaleRange(0.25, 10.75);
+        wrist.scaleRange(0.25, 0.75);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
@@ -207,12 +207,13 @@ public class LeoOne extends Robot {
     }
 
     public void extendArm(double inOrOut) {
+        double extendPos = extensionMotor.getCurrentPosition();
         if ((Math.abs(extensionMotor.getCurrentPosition() - lastExtendPos)) > 2) {
             extensionAtZero = false;
         }
 
         if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
-            if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 2000) {
+            if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 1500) {
                 extensionMotor.setPower(inOrOut);
                 extendTargetPosition = extensionMotor.getCurrentPosition();
             } else {
@@ -221,19 +222,20 @@ public class LeoOne extends Robot {
             extendTime.reset();
         } else if (!extensionAtZero) {
             if (extendTime.seconds() > 0.2) {
-                double extendPos = extensionMotor.getCurrentPosition();
                 if ((Math.abs(extendPos - lastExtendPos)) < 2) {
                     extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     extendTargetPosition = 0;
-                    extensionMotor.setVelocity(0);
+                    extensionMotor.Pid(0);
                     extensionAtZero = true;
+                } else {
+                    extensionMotor.setPower(-1);
                 }
-                lastArmPos = extendPos;
-                armTime.reset();
+                lastExtendPos = extendPos;
+                extendTime.reset();
             }
         }
-        this.telemetry.addData("last Pos: ", lastExtendPos);
+        this.telemetry.addData("extendPos: ", lastExtendPos);
         this.telemetry.addData("Ex motor is currently: ", extensionMotor.getCurrentPosition());
     }
     
@@ -324,6 +326,9 @@ public class LeoOne extends Robot {
 
         this.telemetry.addData("Extend Power: ", extensionMotor.getPower());
 
+        this.telemetry.addData("currentPos: ", armMotorEx.getCurrentPosition());
+        this.telemetry.addData("lastPos: ", lastArmPos);
+
         if (isArmZeroing && (armTime.seconds() > 0.2)) {
             double pos = armMotorEx.getCurrentPosition();
             if ((Math.abs(pos - lastArmPos)) < 2) {
@@ -335,9 +340,6 @@ public class LeoOne extends Robot {
             }
             lastArmPos = pos;
             armTime.reset();
-
-            this.telemetry.addData("currentPos: ", pos);
-            this.telemetry.addData("lastPos: ", lastArmPos);
         }
     }
 }
