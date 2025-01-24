@@ -271,6 +271,9 @@ public class LeoOne extends Robot {
     public void moveArmToPos(int pos) {
         armTargetPosition = pos;
         armMotorEx.Pid(armTargetPosition);
+        telemetry.addData("TArmget pos: ", armTargetPosition);
+        telemetry.addData("Arm pos: ", armMotorEx.getCurrentPosition());
+        telemetry.update();
     }
 
     public int getArmPosition() {

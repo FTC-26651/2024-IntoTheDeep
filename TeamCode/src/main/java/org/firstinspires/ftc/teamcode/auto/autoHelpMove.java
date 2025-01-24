@@ -26,10 +26,10 @@ public class autoHelpMove {
         ((LeoOne)robot).moveWithEncoder(backLeftTarget, backRightTarget, frontLeftTarget, frontRightTarget);
 
         if (
-            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) < 10 &&
-            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) < 10 &&
-            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) < 10 &&
-            (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) < 10
+            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) > 10 &&
+            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) > 10 &&
+            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) > 10 &&
+            (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) > 10
         ) {
             atTarget = true;
             robot.stopDrive();
@@ -46,7 +46,7 @@ public class autoHelpMove {
                 (clockwise ? 1 : -1) * out
         );
 
-        if (Math.abs(deg - robot.getYaw()) < 2) {
+        if (Math.abs(deg - robot.getYaw()) > 2) {
             atTarget = true;
         }
     }
@@ -83,7 +83,7 @@ public class autoHelpMove {
     }
 
     public void driveUntilDist(double in) {
-        while (((LeoOne)robot).getDist() > in) {
+        while (linearOpMode.opModeIsActive() && ((LeoOne)robot).getDist() > in) {
             robot.move(1, 0, 0);
         }
         robot.stopDrive();
@@ -106,13 +106,13 @@ public class autoHelpMove {
     }
 
     public void extendToPos(int pos) {
-        while (Math.abs(pos - ((LeoOne)robot).getExtendPosition()) < 10) {
+        while (Math.abs(pos - ((LeoOne)robot).getExtendPosition()) > 10) {
             _extendToPos(pos);
         }
     }
 
     public void moveArmToPos(int pos) {
-        while (Math.abs(pos - robot.getArmPosition()) < 10) {
+        while (Math.abs(pos - robot.getArmPosition()) > 10) {
             _moveArmToPos(pos);
         }
         robot.stopArm();
@@ -131,7 +131,7 @@ public class autoHelpMove {
          while (
                  linearOpMode.opModeIsActive() &&
                  ((LeoOne)robot).getDist() > in &&
-                 Math.abs(pos - robot.getArmPosition()) < 10
+                 Math.abs(pos - robot.getArmPosition()) > 10
          ) {
              robot.move(drivePid.getPid(in, ((LeoOne)robot).getDist()), 0, 0);
              _moveArmToPos(pos);
@@ -148,7 +148,7 @@ public class autoHelpMove {
         while (
                 linearOpMode.opModeIsActive() &&
                 !atTarget &&
-                Math.abs(pos - robot.getArmPosition()) < 10
+                Math.abs(pos - robot.getArmPosition()) > 10
         ) {
             _turn(deg, clockwise);
             _moveArmToPos(pos);
