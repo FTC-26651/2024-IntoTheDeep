@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto by Time - Better Sample Start", group = "Robot")
+@Autonomous(name = "Auto - ample Start", group = "Robot")
 public class AutoSample extends LinearOpMode {
     Robot robot;
 
@@ -29,8 +29,9 @@ public class AutoSample extends LinearOpMode {
 
         /* Sample */
         //auto.moveUntilDistAndArm(25, 4000);
-        auto.driveUntilDist(25);
-        auto.moveArmToPos(4000);
+        robot.moveWrist(2);
+        //auto.driveUntilDist(20);
+        //auto.moveArmToPos(2500);
 //        auto.openClaw();
 //
 //        /* Specimen 1 */
@@ -49,5 +50,6 @@ public class AutoSample extends LinearOpMode {
 //        auto.driveInches(45);
 //        auto.turn(30, true);
 //        auto.moveArmToPos(2900);
+        sleep(100000);
     }
 }

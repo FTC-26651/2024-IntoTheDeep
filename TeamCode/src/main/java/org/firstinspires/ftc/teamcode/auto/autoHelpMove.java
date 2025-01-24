@@ -23,13 +23,13 @@ public class autoHelpMove {
     /* Private Methods */
 
     private void moveToPos(double backLeftTarget, double backRightTarget, double frontLeftTarget, double frontRightTarget) {
-        ((LeoOne)robot).moveWithEncoder(backLeftTarget, backRightTarget, frontLeftTarget, frontRightTarget);
+        ((LeoOne)robot).moveWithEncoder(-backLeftTarget, -backRightTarget, -frontLeftTarget, -frontRightTarget);
 
         if (
-            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) > 10 &&
-            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) > 10 &&
-            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) > 10 &&
-            (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) > 10
+            (Math.abs(backLeftTarget - ((LeoOne)robot).getBackLeftPos())) < 10 &&
+            (Math.abs(backRightTarget - ((LeoOne)robot).getBackRightPos())) < 10 &&
+            (Math.abs(frontLeftTarget - ((LeoOne)robot).getFrontLeftPos())) < 10 &&
+            (Math.abs(frontRightTarget - ((LeoOne)robot).getFrontRightPos())) < 10
         ) {
             atTarget = true;
             robot.stopDrive();
@@ -46,7 +46,7 @@ public class autoHelpMove {
                 (clockwise ? 1 : -1) * out
         );
 
-        if (Math.abs(deg - robot.getYaw()) > 2) {
+        if (Math.abs(deg - robot.getYaw()) < 2) {
             atTarget = true;
         }
     }
@@ -83,9 +83,13 @@ public class autoHelpMove {
     }
 
     public void driveUntilDist(double in) {
+        linearOpMode.telemetry.addData("Dist: ", ((LeoOne)robot).getDist());
         while (linearOpMode.opModeIsActive() && ((LeoOne)robot).getDist() > in) {
-            robot.move(1, 0, 0);
+            linearOpMode.telemetry.addData("Dist: ", ((LeoOne)robot).getDist());
+            robot.move(0, -1, 0);
+            linearOpMode.telemetry.update();
         }
+        linearOpMode.telemetry.update();
         robot.stopDrive();
 
         // Flush bad data
@@ -119,11 +123,11 @@ public class autoHelpMove {
     }
 
     public void openClaw() {
-        robot.moveClaw(1);
+        robot.moveClaw(0);
     }
 
     public void closeClaw() {
-        robot.moveClaw(0);
+        robot.moveClaw(1);
     }
 
     /* MultiThread */
