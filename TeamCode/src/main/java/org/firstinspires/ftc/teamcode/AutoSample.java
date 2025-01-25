@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto - ample Start", group = "Robot")
+@Autonomous(name = "Auto - Sample Start", group = "Robot")
 public class AutoSample extends LinearOpMode {
     Robot robot;
 
@@ -21,6 +21,8 @@ public class AutoSample extends LinearOpMode {
         robot.setName("Leo One");
         robot.initRobot();
 
+        ((LeoOne)robot).initRobotEncoders();
+
         auto = new autoHelpMove(this, robot);
 
         auto.closeClaw();
@@ -29,10 +31,11 @@ public class AutoSample extends LinearOpMode {
 
         /* Sample */
         //auto.moveUntilDistAndArm(25, 4000);
-        robot.moveWrist(2);
-        //auto.driveUntilDist(20);
-        //auto.moveArmToPos(2500);
-//        auto.openClaw();
+        auto.driveUntilDist(21);
+        auto.moveArmToPos(1800);
+        robot.moveWrist(0.5);
+        auto.killArmToPos(3100);
+        auto.openClaw();
 //
 //        /* Specimen 1 */
 //        auto.turn(90, false);

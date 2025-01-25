@@ -58,6 +58,13 @@ public class LeoOne extends Robot {
     public LeoOne(HardwareMap hm, Telemetry tm) {
         super(hm, tm);
     }
+
+    public void initRobotEncoders() {
+        armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     public void initRobot() {
         armMotor = this.hardwareMap.get(DcMotorEx.class, "left_arm");
         exM = this.hardwareMap.get(DcMotorEx.class, "extender");
@@ -96,10 +103,6 @@ public class LeoOne extends Robot {
 
         armMotorEx.setCurrentAlert(9.2, CurrentUnit.AMPS);
 
-        armMotorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -111,10 +114,10 @@ public class LeoOne extends Robot {
 
         armMotorEx.setPid(0.0025, 0.001, 0.00015);
         extensionMotor.setPid(0.00009, 0.00005, 0.00005);
-        frontLeftDrive.setPid(0.2, 0.001, 0.0005);
-        frontRightDrive.setPid(0.2, 0.001, 0.0005);
-        backLeftDrive.setPid(0.2, 0.001, 0.0005);
-        backRightDrive.setPid(0.2, 0.001, 0.0005);
+        frontLeftDrive.setPid(0.05, 0.001, 0.001);
+        frontRightDrive.setPid(0.05, 0.001, 0.001);
+        backLeftDrive.setPid(0.05, 0.001, 0.001);
+        backRightDrive.setPid(0.05, 0.001, 0.001);
 
         claw.scaleRange(0.30, 1);
         wrist.scaleRange(0.25, 0.75);

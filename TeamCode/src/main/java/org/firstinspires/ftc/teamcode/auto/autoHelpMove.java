@@ -119,6 +119,12 @@ public class autoHelpMove {
         while (Math.abs(pos - robot.getArmPosition()) > 10) {
             _moveArmToPos(pos);
         }
+    }
+
+    public void killArmToPos(int pos) {
+        while (Math.abs(pos - robot.getArmPosition()) > 10) {
+            _moveArmToPos(pos);
+        }
         robot.stopArm();
     }
 

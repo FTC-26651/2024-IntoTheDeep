@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto by Time - Specimen Start, near post", group = "Robot")
+@Autonomous(name = "Auto by Time - Park", group = "Robot")
 public class TimeBasedSpecimen extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
-    double speed = 0.5;
+    double speed = -0.5;
     Robot robot;
 
     @Override
