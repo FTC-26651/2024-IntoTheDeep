@@ -215,8 +215,12 @@ public class LeoOne extends Robot {
             extensionAtZero = false;
         }
 
-        if (!isArmZeroing && armMotorEx.getCurrentPosition() < 3200 && armMotorEx.getCurrentPosition() > 2400) {
-            if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 1500) {
+        if (!isArmZeroing &&
+                armMotorEx.getCurrentPosition() < 2800 &&
+                armMotorEx.getCurrentPosition() > 2300 &&
+                getPitch() < 15
+        ) {
+            if (inOrOut != 0 && extensionMotor.getCurrentPosition() < 1200) {
                 extensionMotor.setPower(inOrOut);
                 extendTargetPosition = extensionMotor.getCurrentPosition();
             } else {

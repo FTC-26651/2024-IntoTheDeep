@@ -31,10 +31,10 @@ public class AutoSample extends LinearOpMode {
 
         /* Sample */
         //auto.moveUntilDistAndArm(25, 4000);
-        auto.driveUntilDist(21);
+        auto.driveUntilDist(25.75);
         auto.moveArmToPos(1800);
         robot.moveWrist(0.5);
-        auto.killArmToPos(3100);
+        auto.killArmToPos(3600);
         auto.openClaw();
 //
 //        /* Specimen 1 */
